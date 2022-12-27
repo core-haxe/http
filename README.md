@@ -14,6 +14,7 @@ flexible http client supporting different http providers
  # basic usage
 
 ### get
+
 ```haxe
 var client = new HttpClient();
 client.followRedirects = false; // defaults to true
@@ -32,6 +33,7 @@ client.get('http://someurl?param1=value1', ["param2" => "value2"], ["header1" =>
 ```
 
 ### post
+
 ```haxe
 var client = new HttpClient();
 client.post('http://someurl?param1=value1', {foo: "bar"}, ["param2" => "value2"], ["header1" => "header value 1"]).then(result -> {
