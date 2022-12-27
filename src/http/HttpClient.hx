@@ -15,7 +15,7 @@ import queues.NonQueue;
 class HttpClient {
     private var log:Logger = new Logger(HttpClient);
     /**
-     * Whether to follow http redirects automatically
+     * Whether to follow http redirects automatically or not
      */
     public var followRedirects:Bool = true;
     /**
