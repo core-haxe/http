@@ -23,8 +23,6 @@ class HttpClient {
     public var requestTransformers:Array<IHttpRequestTransformer>;
     public var responseTransformers:Array<IHttpResponseTransformer>;
 
-    private var _requestQueue_OLD:Array<RequestQueueItem> = [];
-
     public function new() {
     }
 
