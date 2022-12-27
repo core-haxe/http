@@ -14,12 +14,23 @@ import queues.NonQueue;
 
 class HttpClient {
     private var log:Logger = new Logger(HttpClient);
-
+    /**
+     * Whether to follow http redirects automatically or not
+     */
     public var followRedirects:Bool = true;
+    /**
+     * If a http request fails, try to restablish a connection attempt `x` times
+     */
     public var retryCount:Null<Int> = 3;
+    /**
+     * Add a delay to the retry attempt
+     */
     public var retryDelayMs:Int = 1000;
+    /**
+     * A set of default headers that will be added to all outgoing http requests
+     * See the enum `StandardHeaders` for a list of http headers 
+     */
     public var defaultRequestHeaders:Map<String, Any>;
-
     public var requestTransformers:Array<IHttpRequestTransformer>;
     public var responseTransformers:Array<IHttpResponseTransformer>;
 
@@ -64,26 +75,61 @@ class HttpClient {
         return value;
     }
 
-    public function get(request:HttpRequest, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
+    /**
+     * Performs a get request 
+     * @param request - The url that is being requested
+     * @param queryParams - Add any query parameters
+     * @param headers - Add any additional headers that should go along with the request, these will be in addition to the headers set on `defaultHeaders`. \nNote headers specified here will take precedent over ones specified as default
+     * @return Promise<HttpResult>
+     */
+    public inline function get(request:HttpRequest, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
         request.method = HttpMethod.Get;
         return makeRequest(request, null, queryParams, headers);
     }
-
-    public function post(request:HttpRequest, body:Any = null, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
+    /**
+     * Performs a post request 
+     * @param request - The url that is being requested
+     * @param queryParams - Add any query parameters
+     * @param headers - Add any additional headers that should go along with the request, these will be in addition to the headers set on `defaultHeaders`. \nNote headers specified here will take precedent over ones specified as default
+     * @return Promise<HttpResult>
+     */
+    public inline function post(request:HttpRequest, body:Any = null, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
         request.method = HttpMethod.Post;
         return makeRequest(request, body, queryParams, headers);
     }
-
-    public function put(request:HttpRequest, body:Any = null, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
+    /**
+     * Performs a put request
+     * @param request - The url that is being requested
+     * @param body - Add a data object
+     * @param queryParams - Add any query parameters
+     * @param headers - Add any additional headers that should go along with the request, these will be in addition to the headers set on `defaultHeaders`. \nNote headers specified here will take precedent over ones specified as default
+     * @return Promise<HttpResult>
+     */
+    public inline function put(request:HttpRequest, body:Any = null, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
         request.method = HttpMethod.Put;
         return makeRequest(request, body, queryParams, headers);
     }
-
-    public function delete(request:HttpRequest, body:Any = null, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
+    /**
+     * Performs a delete request
+     * @param request - The url that is being requested
+     * @param body - Add a data object 
+     * @param queryParams - Add any query parameters
+     * @param headers - Add any additional headers that should go along with the request, these will be in addition to the headers set on `defaultHeaders`. \nNote headers specified here will take precedent over ones specified as default
+     * @return Promise<HttpResult>
+     */
+    public inline function delete(request:HttpRequest, body:Any = null, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
         request.method = HttpMethod.Delete;
         return makeRequest(request, body, queryParams, headers);
     }
 
+    /**
+     * Trigger a http request 
+     * @param request - The url that is being requested
+     * @param body - Add a data object 
+     * @param queryParams - Add any query parameters
+     * @param headers - Add any additional headers that should go along with the request, these will be in addition to the headers set on `defaultHeaders`. \nNote headers specified here will take precedent over ones specified as default
+     * @return Promise<HttpResult>
+     */
     public function makeRequest(request:HttpRequest, body:Any = null, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
         var copy = request.clone();
 
