@@ -28,7 +28,7 @@ class HttpClient {
     public var retryDelayMs:Int = 1000;
     /**
      * A set of default headers that will be added to all outgoing http requests
-		 * See the enum `StandardHeaders` for a list of http headers 
+     * See the enum `StandardHeaders` for a list of http headers 
      */
     public var defaultRequestHeaders:Map<String, Any>;
     public var requestTransformers:Array<IHttpRequestTransformer>;
