@@ -1,0 +1,9 @@
+--class-path .
+--main TestAll
+
+-lib utest
+-lib http
+-D no-deprecation-warnings
+
+--cpp build/hxcpp
+--cmd .\build\hxcpp\TestAll
