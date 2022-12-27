@@ -64,22 +64,22 @@ class HttpClient {
         return value;
     }
 
-    public function get(request:HttpRequest, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
+    public inline function get(request:HttpRequest, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
         request.method = HttpMethod.Get;
         return makeRequest(request, null, queryParams, headers);
     }
 
-    public function post(request:HttpRequest, body:Any = null, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
+    public inline function post(request:HttpRequest, body:Any = null, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
         request.method = HttpMethod.Post;
         return makeRequest(request, body, queryParams, headers);
     }
 
-    public function put(request:HttpRequest, body:Any = null, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
+    public inline function put(request:HttpRequest, body:Any = null, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
         request.method = HttpMethod.Put;
         return makeRequest(request, body, queryParams, headers);
     }
 
-    public function delete(request:HttpRequest, body:Any = null, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
+    public inline function delete(request:HttpRequest, body:Any = null, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
         request.method = HttpMethod.Delete;
         return makeRequest(request, body, queryParams, headers);
     }
