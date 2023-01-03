@@ -21,7 +21,7 @@ class HttpClient {
     /**
      * If a http request fails, try to restablish a connection attempt `x` times
      */
-    public var retryCount:Null<Int> = 3;
+    public var retryCount:Null<Int> = 0;
     /**
      * Add a delay to the retry attempt
      */
