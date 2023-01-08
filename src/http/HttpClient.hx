@@ -1,5 +1,6 @@
 package http;
 
+import queues.QueueFactory;
 import queues.NonQueue;
 import queues.IQueue;
 import http.HttpMethod;
@@ -37,29 +38,30 @@ class HttpClient {
     public function new() {
     }
 
-    private var _requestQueueProvider:Class<IQueue<RequestQueueItem>> = null;
-    public var requestQueueProvider(get, set):Class<IQueue<RequestQueueItem>>;
-    private function get_requestQueueProvider():Class<IQueue<RequestQueueItem>> {
-        if (_requestQueueProvider == null) {
-            _requestQueueProvider = NonQueue;
-        }
-        return _requestQueueProvider;
-    }
-    private function set_requestQueueProvider(value:Class<IQueue<RequestQueueItem>>):Class<IQueue<RequestQueueItem>> {
-        _requestQueueProvider = value;
-        return value;
-    }
-
-    private var _requestQueue:IQueue<RequestQueueItem> = null;
-    private var requestQueue(get, null):IQueue<RequestQueueItem>;
-    private function get_requestQueue():IQueue<RequestQueueItem> {
+    // some queues will want to serialize the data, this means things
+    // like functions wont work since they cant be serialized, the 
+    // solution is to keep the data (including functions) in a map
+    // that we'll look up based on the queue data which, for now
+    // will simply be an incrementing int.
+    //
+    // TODO: is an incrementing int "good enough"?
+    private var _nextId:Int = 0;
+    private var _idToItem:Map<Int, RequestQueueItem> = [];
+    private var _requestQueue:IQueue<Int> = null;
+    public var requestQueue(get, set):IQueue<Int>;
+    private function get_requestQueue():IQueue<Int> {
         if (_requestQueue != null) {
             return _requestQueue;
         }
 
-        _requestQueue = Type.createInstance(requestQueueProvider, []);
+        _requestQueue = QueueFactory.instance.createQueue(QueueFactory.NON_QUEUE);
         _requestQueue.onMessage = onQueueMessage;
         return _requestQueue;
+    }
+    private function set_requestQueue(value:IQueue<Int>):IQueue<Int> {
+        _requestQueue = value;
+        _requestQueue.onMessage = onQueueMessage;
+        return value;
     }
 
     private var _provider:IHttpProvider = null;
@@ -179,17 +181,29 @@ class HttpClient {
         }
 
         return new Promise((resolve, reject) -> {
-            requestQueue.enqueue({
-                retryCount: 0,
-                request: copy,
-                resolve: resolve,
-                reject: reject
+            requestQueue.start().then(_ -> {
+                _nextId++;
+                _idToItem.set(_nextId, {
+                    retryCount: 0,
+                    request: copy,
+                    resolve: resolve,
+                    reject: reject
+                });
+                requestQueue.enqueue(_nextId);
+            }, error -> {
+                reject(error);
             });
         });
     }
 
-    private function onQueueMessage(item:RequestQueueItem) {
+    private function onQueueMessage(itemId:Int) {
         return new Promise((resolve, reject) -> {
+            var item = _idToItem.get(itemId);
+            if (item == null) {
+                var httpError = new HttpError("could not find request item in map");
+                reject(httpError);
+                return;
+            }
             var request = item.request.clone();
             if (requestTransformers != null) {
                 for (transformer in requestTransformers) {
@@ -235,6 +249,7 @@ class HttpClient {
                         var httpError = new HttpError("no location header found", response.httpStatus);
                         httpError.body = response.body;
                         httpError.headers = response.headers;
+                        _idToItem.remove(itemId);
                         item.reject(httpError);
                         resolve(true); // ack
                         return;
@@ -244,17 +259,19 @@ class HttpClient {
                     item.request.url = redirectLocation;
                     item.request.url.queryParams = queryParams;
                     item.retryCount = 0;
-                    requestQueue.enqueue(item);
+                    requestQueue.requeue(itemId);
                     resolve(true); // ack
                     return;
                 }
 
+                _idToItem.remove(itemId);
                 item.resolve(new HttpResult(this, response));
                 resolve(true); // ack
             }, (error:HttpError) -> {
                 if (retryCount == null) {
                     log.error('request failed (${error.httpStatus})');
                     error.retryCount = 0;
+                    _idToItem.remove(itemId);
                     item.reject(error); 
                 } else {
                     item.retryCount++;
@@ -266,16 +283,11 @@ class HttpClient {
                             log.error('request failed (${error.httpStatus})');
                             error.retryCount = 0;
                         }
+                        _idToItem.remove(itemId);
                         item.reject(error); 
                     } else {
                         log.error('request failed (${error.httpStatus}), retrying (${item.retryCount} of ${retryCount})');
-                        if (retryDelayMs > 0) {
-                            Timer.delay(() -> {
-                                requestQueue.enqueue(item);
-                            }, retryDelayMs);
-                        } else {
-                            requestQueue.enqueue(item);
-                        }
+                        requestQueue.requeue(itemId, retryDelayMs);
                     }
                 }
                 resolve(true); // we are resolving true even though its an error as this is to tell the queue we have processed the message (ie, ack)
