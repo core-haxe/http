@@ -21,7 +21,7 @@ client.followRedirects = false; // defaults to true
 client.retryCount = 5; // defaults to 0
 client.retryDelayMs = 0; // defaults to 1000
 client.provider = new MySuperHttpProvider(); // defaults to "DefaultHttpProvider"
-client.requestQueueProvider = SimpleQueue; // defaults to "NonQueue"
+client.requestQueue = QueueFactory.instance.createQueue(QueueFactory.SIMPLE_QUEUE); // defaults to "NonQueue"
 client.defaultRequestHeaders = ["someheader" => "somevalue"];
 client.requestTransformers = [new MyRequestTransformerA(), new MyRequestTransformerB()];
 client.responseTransformers = [new MyResponseTransformerA(), new MyResponseTransformerB()];
