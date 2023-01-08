@@ -18,7 +18,7 @@ flexible http client supporting different http providers
 ```haxe
 var client = new HttpClient();
 client.followRedirects = false; // defaults to true
-client.retryCount = 5; // defaults to 3
+client.retryCount = 5; // defaults to 0
 client.retryDelayMs = 0; // defaults to 1000
 client.provider = new MySuperHttpProvider(); // defaults to "DefaultHttpProvider"
 client.requestQueueProvider = SimpleQueue; // defaults to "NonQueue"
