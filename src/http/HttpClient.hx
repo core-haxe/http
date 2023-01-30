@@ -76,7 +76,26 @@ class HttpClient {
         _provider = value;
         return value;
     }
+	/**
+	 * Add a header to the default header map
+	 * @param header - name of the header
+	 * @param value - value of the header
+	 */
+	public inline function setDefaultRequestHeader(header:String, value:Any) {
+		if (this.defaultRequestHeaders == null) {
+			this.defaultRequestHeaders = [];
+		}
+		this.defaultRequestHeaders[header] = value;
+	}
 
+	/**
+	 * Remove a header from the default header map
+	 * @param header - name of the header
+	 * @param value - value of the header
+	 */
+	public inline function removeDefaultRequestHeader(header:String, value:Any) {
+		return this.defaultRequestHeaders != null && this.defaultRequestHeaders.remove(header);
+	}
     /**
      * Performs a get request 
      * @param request - The url that is being requested
