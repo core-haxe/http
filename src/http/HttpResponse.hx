@@ -16,12 +16,18 @@ class HttpResponse {
     public function new() {
     }
 
+    private var _body:Bytes = null;
     public var body(get, set):Bytes;
     private function get_body():Bytes {
+        if (_body != null) {
+            return _body;
+        }
         if (buffer == null) {
             return null;
         }
-        return buffer.getBytes();
+        _body = buffer.getBytes();
+        buffer = null;
+        return _body;
     }
     private function set_body(value:Bytes):Bytes {
         if (value == null) {
