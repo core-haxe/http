@@ -32,4 +32,4 @@ jobs:
         haxelib dev queues-core queues-core
         git clone https://github.com/core-haxe/http
         haxelib dev http http
-        sudo apt-get -y install libpng-dev libturbojpeg-dev libvorbis-dev libopenal-dev libsdl2-dev libmbedtls-dev libuv1-dev libsqlite3-dev
+        if [[ "${{ matrix.os }}" == ubuntu* ]]; then sudo apt-get -y install libpng-dev libturbojpeg-dev libvorbis-dev libopenal-dev libsdl2-dev libmbedtls-dev libuv1-dev libsqlite3-dev
