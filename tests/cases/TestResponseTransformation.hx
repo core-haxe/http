@@ -8,7 +8,7 @@ import http.HttpClient;
 import utest.Async;
 import utest.Test;
 
-@:timeout(2000)
+@:timeout(20000)
 class TestResponseTransformation extends Test {
     private static inline var BASE_URL:String = "https://httpbin.org";
 

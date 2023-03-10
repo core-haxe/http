@@ -1,10 +1,14 @@
+--cmd echo TESTING HASHLINK
 test-hl.hxml
 
 --next
+--cmd echo TESTING HXCPP
 test-hxcpp.hxml
 
 --next
+--cmd echo TESTING NEKO
 test-neko.hxml
 
 --next
+--cmd echo TESTING NODEJS
 test-nodejs.hxml
