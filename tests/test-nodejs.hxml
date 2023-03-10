@@ -1,10 +1,4 @@
---class-path .
---main TestAll
-
--lib utest
--lib http
--lib hxnodejs
--D no-deprecation-warnings
+common-nodejs.hxml
 
 --js build/nodejs/test-all.js
 --cmd node build/nodejs/test-all.js

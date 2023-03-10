@@ -1,0 +1,5 @@
+--class-path .
+--main TestAll
+
+-lib utest
+-lib http

@@ -1,0 +1,3 @@
+common.hxml
+-lib hxnodejs
+-D no-deprecation-warnings

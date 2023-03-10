@@ -1,9 +1,4 @@
---class-path .
---main TestAll
-
--lib utest
--lib http
--D no-deprecation-warnings
+common.hxml
 
 --neko build/neko/test-all.n
 --cmd neko .\build\neko\test-all.n

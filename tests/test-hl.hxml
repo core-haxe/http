@@ -1,9 +1,4 @@
---class-path .
---main TestAll
-
--lib utest
--lib http
--D no-deprecation-warnings
+common.hxml
 
 --hl build/hl/test-all.hl
 --cmd hl .\build\hl\test-all.hl

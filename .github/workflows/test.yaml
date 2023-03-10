@@ -1,4 +1,4 @@
-name: My Haxe Build
+name: Run Tests
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
     with:
       runner-os: ${{ matrix.os }}
       haxe-version: ${{ matrix.haxe }}
-      test-neko:  tests/test-neko.hxml
+      test-neko:  tests/common.hxml
 
       before-tests: |
         git clone https://github.com/core-haxe/promises
