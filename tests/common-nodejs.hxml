@@ -1,3 +1,8 @@
-common.hxml
+--class-path .
+--main TestAll
+
+-lib utest
+-lib http
+
 -lib hxnodejs
 -D no-deprecation-warnings

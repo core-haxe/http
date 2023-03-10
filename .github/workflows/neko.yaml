@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  my-haxe-build:
+  run-tests:
     uses: vegardit/haxe-reusable-workflows/.github/workflows/test-with-haxe.yml@v1
     strategy:
       fail-fast: false
