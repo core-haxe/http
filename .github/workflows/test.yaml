@@ -19,10 +19,9 @@ jobs:
     with:
       runner-os: ${{ matrix.os }}
       haxe-version: ${{ matrix.haxe }}
-      haxe-args: --class-path tests
       haxe-libs: |
         utest
-      test-neko:  tests/common.hxml
+      test-neko:  tests/common.hxml --class-path tests
 
       before-tests: |
         git clone https://github.com/core-haxe/promises
