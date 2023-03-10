@@ -1,0 +1,34 @@
+name: Run Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  my-haxe-build:
+    uses: vegardit/haxe-reusable-workflows/.github/workflows/test-with-haxe.yml@v1
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        haxe:
+          - 4.2.5
+    with:
+      runner-os: ${{ matrix.os }}
+      haxe-version: ${{ matrix.haxe }}
+      haxe-libs: |
+        utest
+      test-node:  tests/common-nodejs.hxml --class-path tests
+
+      before-tests: |
+        git clone https://github.com/core-haxe/promises
+        haxelib dev promises promises
+        git clone https://github.com/core-haxe/logging
+        haxelib dev logging logging
+        git clone https://github.com/core-haxe/queues-core
+        haxelib dev queues-core queues-core
+        git clone https://github.com/core-haxe/http
+        haxelib dev http http

@@ -21,10 +21,7 @@ jobs:
       haxe-version: ${{ matrix.haxe }}
       haxe-libs: |
         utest
-      test-neko:  tests/common.hxml --class-path tests
       test-hl:  tests/common.hxml --class-path tests
-      test-cpp:  tests/common.hxml --class-path tests
-      test-node:  tests/common-nodejs.hxml --class-path tests
 
       before-tests: |
         git clone https://github.com/core-haxe/promises
