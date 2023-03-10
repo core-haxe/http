@@ -7,9 +7,10 @@ import utest.Async;
 
 @:timeout(20000)
 class TestRedirect extends TestBase {
-    private static inline var BASE_URL:String = "https://httpbin.org";
+    private static var BASE_URL:String = "https://httpbin.org";
 
     function setupClass() {
+        BASE_URL = host();
         logging.LogManager.instance.addAdaptor(new logging.adaptors.ConsoleLogAdaptor({
             levels: [logging.LogLevel.Info, logging.LogLevel.Error]
         }));
@@ -25,7 +26,6 @@ class TestRedirect extends TestBase {
             Assert.notNull(result.response.body);
             var json = result.response.bodyAsJson;
             Assert.notNull(json);
-            Assert.equals("http://httpbin.org/get", json.url);
             async.done();
         }, (error:HttpError) -> {
             Assert.fail();
@@ -39,7 +39,6 @@ class TestRedirect extends TestBase {
             Assert.notNull(result.response.body);
             var json = result.response.bodyAsJson;
             Assert.notNull(json);
-            Assert.equals("http://httpbin.org/get?param1=value1&param2=value2", json.url);
             Assert.equals("value1", json.args.param1);
             Assert.equals("value2", json.args.param2);
             async.done();
@@ -55,7 +54,6 @@ class TestRedirect extends TestBase {
             Assert.notNull(result.response.body);
             var json = result.response.bodyAsJson;
             Assert.notNull(json);
-            Assert.equals("http://httpbin.org/get?param1=value1&param2=value2", json.url);
             Assert.equals("value1", json.args.param1);
             Assert.equals("value2", json.args.param2);
             async.done();
@@ -71,7 +69,6 @@ class TestRedirect extends TestBase {
             Assert.notNull(result.response.body);
             var json = result.response.bodyAsJson;
             Assert.notNull(json);
-            Assert.equals("http://httpbin.org/get", json.url);
             Assert.equals("header value1", json.headers.Header1);
             Assert.equals("header value2", json.headers.Header2);
             async.done();

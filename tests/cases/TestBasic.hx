@@ -7,9 +7,10 @@ import utest.Async;
 
 @:timeout(20000)
 class TestBasic extends TestBase {
-    private static inline var BASE_URL:String = "https://httpbin.org";
+    private static var BASE_URL:String = "https://httpbin.org";
 
     function setupClass() {
+        BASE_URL = host();
         logging.LogManager.instance.addAdaptor(new logging.adaptors.ConsoleLogAdaptor({
             levels: [logging.LogLevel.Info, logging.LogLevel.Error]
         }));
@@ -25,7 +26,7 @@ class TestBasic extends TestBase {
             Assert.notNull(result.response.body);
             var json = result.response.bodyAsJson;
             Assert.notNull(json);
-            Assert.equals("https://httpbin.org/get", json.url);
+            Assert.equals(host() + "/get", json.url);
             async.done();
         }, (error:HttpError) -> {
             Assert.fail();
@@ -39,7 +40,7 @@ class TestBasic extends TestBase {
             Assert.notNull(result.response.body);
             var json = result.response.bodyAsJson;
             Assert.notNull(json);
-            Assert.equals("https://httpbin.org/post", json.url);
+            Assert.equals(host() + "/post", json.url);
             async.done();
         }, (error:HttpError) -> {
             Assert.fail();
@@ -53,7 +54,7 @@ class TestBasic extends TestBase {
             Assert.notNull(result.response.body);
             var json = result.response.bodyAsJson;
             Assert.notNull(json);
-            Assert.equals("https://httpbin.org/put", json.url);
+            Assert.equals(host() + "/put", json.url);
             async.done();
         }, (error:HttpError) -> {
             Assert.fail();
@@ -67,7 +68,7 @@ class TestBasic extends TestBase {
             Assert.notNull(result.response.body);
             var json = result.response.bodyAsJson;
             Assert.notNull(json);
-            Assert.equals("https://httpbin.org/delete", json.url);
+            Assert.equals(host() + "/delete", json.url);
             async.done();
         }, (error:HttpError) -> {
             Assert.fail();

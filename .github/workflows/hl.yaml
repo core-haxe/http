@@ -22,6 +22,7 @@ jobs:
       test-hl:  tests/common.hxml --class-path tests
 
       before-tests: |
+        docker run -p 80:80 kennethreitz/httpbin &
         git clone https://github.com/core-haxe/promises
         haxelib dev promises promises
         git clone https://github.com/core-haxe/logging

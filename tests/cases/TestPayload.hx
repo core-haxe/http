@@ -10,9 +10,10 @@ import utest.Async;
 
 @:timeout(20000)
 class TestPayload extends TestBase {
-    private static inline var BASE_URL:String = "https://httpbin.org";
+    private static var BASE_URL:String = "https://httpbin.org";
 
     function setupClass() {
+        BASE_URL = host();
         logging.LogManager.instance.addAdaptor(new logging.adaptors.ConsoleLogAdaptor({
             levels: [logging.LogLevel.Info, logging.LogLevel.Error]
         }));
@@ -29,7 +30,7 @@ class TestPayload extends TestBase {
             Assert.notNull(result.response.body);
             var json = result.response.bodyAsJson;
             Assert.notNull(json);
-            Assert.equals("https://httpbin.org/post", json.url);
+            Assert.equals(host() + "/post", json.url);
             var data = json.data;
             Assert.notNull(data);
             var jsonData = Json.parse(data);
@@ -49,7 +50,7 @@ class TestPayload extends TestBase {
             Assert.notNull(result.response.body);
             var json = result.response.bodyAsJson;
             Assert.notNull(json);
-            Assert.equals("https://httpbin.org/put", json.url);
+            Assert.equals(host() + "/put", json.url);
             var data = json.data;
             Assert.notNull(data);
             var jsonData = Json.parse(data);

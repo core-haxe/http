@@ -7,9 +7,10 @@ import utest.Async;
 
 @:timeout(20000)
 class TestErrors extends TestBase {
-    private static inline var BASE_URL:String = "https://httpbin.org";
+    private static var BASE_URL:String = "https://httpbin.org";
 
     function setupClass() {
+        BASE_URL = host();
         logging.LogManager.instance.addAdaptor(new logging.adaptors.ConsoleLogAdaptor({
             levels: [logging.LogLevel.Info, logging.LogLevel.Error]
         }));

@@ -1,4 +1,6 @@
 common.hxml
 
+-D httpbin
+
 --hl build/hl/test-all.hl
 --cmd hl .\build\hl\test-all.hl

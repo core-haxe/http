@@ -1,4 +1,6 @@
 common-nodejs.hxml
 
+-D httpbin
+
 --js build/nodejs/test-all.js
 --cmd node build/nodejs/test-all.js

@@ -7,9 +7,10 @@ import utest.Async;
 
 @:timeout(20000)
 class TestQueryParamsAndHeaders extends TestBase {
-    private static inline var BASE_URL:String = "https://httpbin.org";
+    private static var BASE_URL:String = "https://httpbin.org";
 
     function setupClass() {
+        BASE_URL = host();
         logging.LogManager.instance.addAdaptor(new logging.adaptors.ConsoleLogAdaptor({
             levels: [logging.LogLevel.Info, logging.LogLevel.Error]
         }));
@@ -25,7 +26,7 @@ class TestQueryParamsAndHeaders extends TestBase {
             Assert.notNull(result.response.body);
             var json = result.response.bodyAsJson;
             Assert.notNull(json);
-            Assert.equals("https://httpbin.org/get?param1=value1&param2=value2", json.url);
+            Assert.equals(host() + "/get?param1=value1&param2=value2", json.url);
             Assert.equals("value1", json.args.param1);
             Assert.equals("value2", json.args.param2);
             Assert.equals("header value1", json.headers.Header1);
@@ -43,7 +44,7 @@ class TestQueryParamsAndHeaders extends TestBase {
             Assert.notNull(result.response.body);
             var json = result.response.bodyAsJson;
             Assert.notNull(json);
-            Assert.equals("https://httpbin.org/post?param1=value1&param2=value2", json.url);
+            Assert.equals(host() + "/post?param1=value1&param2=value2", json.url);
             Assert.equals("value1", json.args.param1);
             Assert.equals("value2", json.args.param2);
             Assert.equals("header value1", json.headers.Header1);
@@ -61,7 +62,7 @@ class TestQueryParamsAndHeaders extends TestBase {
             Assert.notNull(result.response.body);
             var json = result.response.bodyAsJson;
             Assert.notNull(json);
-            Assert.equals("https://httpbin.org/put?param1=value1&param2=value2", json.url);
+            Assert.equals(host() + "/put?param1=value1&param2=value2", json.url);
             Assert.equals("value1", json.args.param1);
             Assert.equals("value2", json.args.param2);
             Assert.equals("header value1", json.headers.Header1);
@@ -79,7 +80,7 @@ class TestQueryParamsAndHeaders extends TestBase {
             Assert.notNull(result.response.body);
             var json = result.response.bodyAsJson;
             Assert.notNull(json);
-            Assert.equals("https://httpbin.org/delete?param1=value1&param2=value2", json.url);
+            Assert.equals(host() + "/delete?param1=value1&param2=value2", json.url);
             Assert.equals("value1", json.args.param1);
             Assert.equals("value2", json.args.param2);
             Assert.equals("header value1", json.headers.Header1);

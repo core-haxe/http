@@ -1,4 +1,6 @@
 common.hxml
 
+-D httpbin
+
 --cpp build/hxcpp
 --cmd .\build\hxcpp\TestAll
