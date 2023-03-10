@@ -19,6 +19,7 @@ jobs:
     with:
       runner-os: ${{ matrix.os }}
       haxe-version: ${{ matrix.haxe }}
+      haxe-args: --class-path tests
       haxe-libs: |
         utest
       test-neko:  tests/common.hxml
