@@ -24,6 +24,9 @@ class HttpResponse {
         return buffer.getBytes();
     }
     private function set_body(value:Bytes):Bytes {
+        if (value == null) {
+            return value;
+        }
         buffer = new BytesBuffer();
         buffer.addBytes(value, 0, value.length);
         return value;
