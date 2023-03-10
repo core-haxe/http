@@ -1,11 +1,11 @@
 package http.providers;
 
+import haxe.Http;
 import haxe.Json;
 import haxe.io.Bytes;
-import haxe.Http;
-import promises.Promise;
-import logging.Logger;
 import logging.LogManager;
+import logging.Logger;
+import promises.Promise;
 
 class DefaultHttpProvider implements IHttpProvider {
     private var log:Logger = new Logger(DefaultHttpProvider);
@@ -43,7 +43,8 @@ class DefaultHttpProvider implements IHttpProvider {
 
             // log some info (only if a log adapator will respond to debug)
             if (LogManager.instance.shouldLogDebug) {
-                log.debug('making "${request.method.getName().toLowerCase()}" request to "${url}"');
+                var method:String = request.method;
+                log.debug('making "${method.toLowerCase()}" request to "${url}"');
                 log.debug('    headers:', request.headers);
                 log.debug('    query params:', allParameters);
                 if (request.body != null) {
@@ -126,7 +127,7 @@ class DefaultHttpProvider implements IHttpProvider {
 
                     #end
                 case _:
-                    throw new HttpError("http method not implemented (" + request.method.getName() + ")");
+                    throw new HttpError("http method not implemented (" + request.method + ")");
             }
         });
     }

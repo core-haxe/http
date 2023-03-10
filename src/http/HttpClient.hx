@@ -1,17 +1,17 @@
 package http;
 
-import queues.QueueFactory;
-import queues.NonQueue;
-import queues.IQueue;
-import http.HttpMethod;
 import haxe.Timer;
+import http.HttpMethod;
+import http.HttpRequest;
+import http.providers.DefaultHttpProvider;
 import logging.LogManager;
 import logging.Logger;
-import http.HttpRequest;
 import promises.Promise;
-import http.providers.DefaultHttpProvider;
+import queues.IQueue;
 import queues.IQueue;
 import queues.NonQueue;
+import queues.NonQueue;
+import queues.QueueFactory;
 
 class HttpClient {
     private var log:Logger = new Logger(HttpClient);
@@ -230,7 +230,8 @@ class HttpClient {
                 }
             }
 
-            log.info('making "${request.method.getName().toLowerCase()}" request to "${request.url.build()}"');
+            var method:String = request.method;
+            log.info('making "${method.toLowerCase()}" request to "${request.url.build()}"');
             provider.makeRequest(request).then(response -> {
                 if (response != null) {
                     if (LogManager.instance.shouldLogDebug) {
