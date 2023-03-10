@@ -1,16 +1,12 @@
 package cases;
 
-import haxe.Json;
-import http.ContentTypes;
-import http.StandardHeaders;
 import http.HttpError;
 import utest.Assert;
 import http.HttpClient;
 import utest.Async;
-import utest.Test;
 
 @:timeout(20000)
-class TestRedirect extends Test {
+class TestRedirect extends TestBase {
     private static inline var BASE_URL:String = "https://httpbin.org";
 
     function setupClass() {

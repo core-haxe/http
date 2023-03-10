@@ -2,9 +2,8 @@ package cases;
 
 import utest.Assert;
 import http.Url;
-import utest.Test;
 
-class TestUrl extends Test {
+class TestUrl extends TestBase {
     function testBasic() {
         var url = new Url("https://httpbin.org");
         Assert.equals("https", url.scheme);

@@ -4,10 +4,9 @@ import http.HttpError;
 import utest.Assert;
 import http.HttpClient;
 import utest.Async;
-import utest.Test;
 
 @:timeout(20000)
-class TestRetry extends Test {
+class TestRetry extends TestBase {
     private static inline var BASE_URL:String = "https://httpbin.org";
 
     function setupClass() {
