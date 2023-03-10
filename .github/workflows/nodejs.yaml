@@ -23,6 +23,7 @@ jobs:
 
       before-tests: |
         docker run -d -p 80:80 kennethreitz/httpbin &
+        sleep 5
         git clone https://github.com/core-haxe/promises
         haxelib dev promises promises
         git clone https://github.com/core-haxe/logging
