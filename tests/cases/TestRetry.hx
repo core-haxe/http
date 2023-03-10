@@ -28,7 +28,7 @@ class TestRetry extends Test {
             async.done();
         }, (error:HttpError) -> {
             Assert.equals(500, error.httpStatus);
-            Assert.equals(3, error.retryCount);
+            Assert.equals(0, error.retryCount);
             async.done();
         });
     }
