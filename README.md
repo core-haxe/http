@@ -4,7 +4,7 @@
 <a href="https://github.com/core-haxe/http/actions/workflows/neko.yaml"><img src="https://github.com/core-haxe/http/actions/workflows/neko.yaml/badge.svg">
 
 # http
-flexible http client supporting different http providers
+flexible http client and server supporting different http providers
 
 # features
  - Promise based
