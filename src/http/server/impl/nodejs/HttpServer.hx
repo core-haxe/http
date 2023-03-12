@@ -39,7 +39,6 @@ class HttpServer extends HttpServerBase {
                     data = "";
                 }
                 data += "" + chunk;
-				trace('Data chunk available: ${chunk}');
 			});
 			request.on('end', () -> {
                 processRequest(request, response, data);
