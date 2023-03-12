@@ -10,7 +10,7 @@ class HttpError {
     public var body:Bytes = null;
     public var headers:Map<String, Any>;
 
-    public function new(message:String, httpStatus:Null<Int> = null) {
+    public function new(message:String = null, httpStatus:Null<Int> = null) {
         this.message = message;
         this.httpStatus = httpStatus;
     }
