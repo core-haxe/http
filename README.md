@@ -16,7 +16,7 @@ flexible http client supporting different http providers
  - Ability to transform requests / responses (using `IHttpRequestTransformer` or `IHttpResponseTransformer`);
  - Simple, but flexible, interface
  
- # basic usage
+# basic usage
 
 ### get
 
@@ -48,3 +48,28 @@ client.post('http://someurl?param1=value1', {foo: "bar"}, ["param2" => "value2"]
 });
 ```
 (all parameters except the url are optional)
+
+# server (nodejs only currently)
+```haxe
+var httpServer = new HttpServer();
+httpServer.onRequest = (httpRequest, httpResponse) -> {
+    return new Promise((resolve, reject) -> {
+        var userId = httpRequest.queryParams.get("userId");
+        if (userId == null) { // exceptions will be sent back as 500's
+            throw "no user id";
+        }
+        
+        if (Std.parseInt(userId) == null) { // you can also customize errors by using HttpError
+            var error = new HttpError(500);
+            error.body = Bytes.ofString("user is not a number");
+            reject(error);
+            return;
+        }
+        
+        httpResponse.write("this is the response for " + userId);
+        resolve(httpResponse);
+    });
+}
+httpServer.start(1234);
+```
+(see tests for more examples)
