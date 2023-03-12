@@ -22,6 +22,9 @@ class TestAll {
         runner.addCase(new TestRedirect());
         runner.addCase(new TestRequestTransformation());
         runner.addCase(new TestResponseTransformation());
+        #if nodejs // currently on server impl for nodejs
+            runner.addCase(new TestHttpServer());
+        #end
 
         Report.create(runner, SuccessResultsDisplayMode.AlwaysShowSuccessResults, HeaderDisplayMode.NeverShowHeader);
         runner.run();
