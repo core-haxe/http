@@ -3,6 +3,7 @@ package http.server.impl.nodejs;
 import haxe.io.Bytes;
 import haxe.io.Path;
 import http.HttpMethod;
+import js.lib.Error;
 import js.lib.Uint8Array;
 import js.node.Fs;
 import js.node.Http;
@@ -95,11 +96,20 @@ class HttpServer extends HttpServerBase {
             var httpError:HttpError = null;
             if ((error is HttpError)) {
                 httpError = error;
+            } else if (error is Error) {
+                var jsError:Error = cast(error, Error);
+                httpError = new HttpError(jsError.message, HttpStatus.InternalServerError);
+                httpError.body = Bytes.ofString(jsError.message);
             } else {
                 httpError = new HttpError(Std.string(error));
                 httpError.httpStatus = HttpStatus.InternalServerError;
                 httpError.body = Bytes.ofString(Std.string(error));
             }
+
+            if (httpError == null) {
+                httpError = new HttpError("unknown error encountered", HttpStatus.InternalServerError);
+            }
+
             nativeResponse.statusCode = httpError.httpStatus;
             if (httpError.body != null) {
                 var buffer = new Uint8Array(httpError.body.getData(), 0, httpError.body.length);
