@@ -23,9 +23,9 @@
 package haxe.http;
 
 #if js
-import js.html.XMLHttpRequestResponseType;
-import js.html.Blob;
 import haxe.io.Bytes;
+import js.html.Blob;
+import js.html.XMLHttpRequestResponseType;
 
 class HttpJs extends haxe.http.HttpBase {
 	public var async:Bool;

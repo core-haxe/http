@@ -140,6 +140,7 @@ class HttpServer extends HttpServerBase {
             case "put": request.method = HttpMethod.Put;
             case "patch": request.method = HttpMethod.Patch;
             case "delete": request.method = HttpMethod.Delete;
+            case "options": request.method = HttpMethod.Options;
         }
         request.body = payload;
         return request;

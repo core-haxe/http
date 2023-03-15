@@ -7,4 +7,5 @@ abstract HttpMethod(String) from String to String {
     var Put = "put";
     var Patch = "patch";
     var Delete = "delete";
+    var Options = "options";
 }
