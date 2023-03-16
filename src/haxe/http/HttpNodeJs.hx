@@ -26,7 +26,7 @@
 #if nodejs
  import haxe.io.Bytes;
  import js.node.Buffer;
- 
+ import js.node.url.URL;
  class HttpNodeJs extends haxe.http.HttpBase {
      var req:js.node.http.ClientRequest;
  
@@ -51,10 +51,10 @@
          responseAsString = null;
          responseBytes = null;
          responseHeaders = null;
-         var parsedUrl = js.node.Url.parse(url);
+         var parsedUrl = new URL(url);
          var secure = (parsedUrl.protocol == "https:");
          var host = parsedUrl.hostname;
-         var path = parsedUrl.path;
+         var path = parsedUrl.pathname;
          var port = if (parsedUrl.port != null) Std.parseInt(parsedUrl.port) else (secure ? 443 : 80);
          var h:Dynamic = {};
          for (i in headers) {
