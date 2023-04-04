@@ -11,7 +11,7 @@ class HttpServerBase {
 
     public var onRequest:HttpRequest->HttpResponse->Promise<HttpResponse> = null;
 
-    private var _fileDirs:Array<String> = null;
+    private var _fileDirs:Array<FileDir> = null;
 
     public function new() {
     }
@@ -19,12 +19,20 @@ class HttpServerBase {
     public function start(port:Int) {
     }
 
-    public function serveFilesFrom(dir:String) {
+    public function serveFilesFrom(prefix:String, dir:String) {
         if (_fileDirs == null) {
             _fileDirs = [];
         }
         var dir = Path.normalize(Sys.getCwd() + "/" + dir);
         baseLog.info('serving static resources from "${dir}"');
-        _fileDirs.push(dir);
+        _fileDirs.push({
+            prefix: prefix,
+            dir: dir
+        });
     }
+}
+
+typedef FileDir = {
+    var prefix:String;
+    var dir:String;
 }

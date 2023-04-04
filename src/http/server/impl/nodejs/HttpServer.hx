@@ -16,6 +16,8 @@ import promises.Promise;
 import sys.FileSystem;
 import sys.io.File;
 
+using StringTools;
+
 class HttpServer extends HttpServerBase {
     private var log:Logger = new Logger(HttpServer);
 
@@ -47,19 +49,24 @@ class HttpServer extends HttpServerBase {
     }
     
     private function processRequest(nativeRequest:IncomingMessage, nativeResponse:NativeResponse, payload:String) {
-        if (_fileDirs != null) {
+        if (_fileDirs != null && _fileDirs.length != 0) {
             var url = Url.fromString(nativeRequest.url);
             for (fileDir in _fileDirs) {
-                var filePath = Path.normalize(fileDir + "/" + url.path);
-                if (FileSystem.exists(filePath)) {
-                    serveFile(filePath, nativeRequest, nativeResponse);
-                    return;
+                var urlPath = url.path;
+                urlPath = urlPath.urlDecode();
+                if (urlPath.startsWith(fileDir.prefix)) {
+                    var relativePath = urlPath.replace(fileDir.prefix, "");
+                    var filePath = Path.normalize(fileDir.dir + "/" + relativePath);
+                    if (FileSystem.exists(filePath)) {
+                        serveFile(filePath, nativeRequest, nativeResponse);
+                        return;
+                    }
                 }
             }
         }
 
         var ip = nativeRequest.socket.remoteAddress;
-        log.info('incoming request to "${nativeRequest.url}" from "${ip}"');
+        log.info('incoming ${nativeRequest.method} request to "${nativeRequest.url}" from "${ip}"');
         if (LogManager.instance.shouldLogData) {
             log.data('headers', nativeRequest.headers);
             if (payload != null) {
