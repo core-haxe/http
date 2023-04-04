@@ -55,6 +55,15 @@
          var secure = (parsedUrl.protocol == "https:");
          var host = parsedUrl.hostname;
          var path = parsedUrl.pathname;
+         var queryParams = parsedUrl.search;
+         if (queryParams != null && queryParams.length > 0) {
+            if (!StringTools.startsWith(queryParams, "?")) {
+                queryParams = "?" + queryParams;
+            }
+        } 
+        if (queryParams != null) {
+            path += queryParams;
+        }
          var port = if (parsedUrl.port != null) Std.parseInt(parsedUrl.port) else (secure ? 443 : 80);
          var h:Dynamic = {};
          for (i in headers) {
