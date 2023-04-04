@@ -132,6 +132,10 @@ class HttpServer extends HttpServerBase {
                 return;
             }
 
+            // TODO: make optional and restricted
+            nativeResponse.setHeader("Access-Control-Allow-Origin", "*");
+            nativeResponse.setHeader("Access-Control-Allow-Headers", "*");
+
             nativeResponse.write(buffer);
             nativeResponse.end();
         });
