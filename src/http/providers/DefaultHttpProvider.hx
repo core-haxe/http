@@ -7,13 +7,52 @@ import logging.LogManager;
 import logging.Logger;
 import promises.Promise;
 
+#if sys
+private typedef ThreadInfo = {
+    var request:HttpRequest;
+    var resolve:HttpResponse->Void;
+    var reject:Any->Void;
+}
+#end
+
 class DefaultHttpProvider implements IHttpProvider {
     private var log:Logger = new Logger(DefaultHttpProvider);
 
     public function new() {
     }
 
+    #if sys
+    // basic threaded request, which allows for async programming, could / should be greatly 
+    // improved by using a thread pool, but for a preliminary impl its better than the
+    // standard (sync) behaviour of haxe std http
+    private function makeThreadedRequest(request:HttpRequest):Promise<HttpResponse> {
+        return new Promise((resolve, reject) -> {
+            var thread = sys.thread.Thread.create(() -> {
+                var info:ThreadInfo = sys.thread.Thread.readMessage(true);
+                makeRequestCommon(info.request).then(result -> {
+                    info.resolve(result);
+                }, error -> {
+                    info.reject(error);
+                });
+            });
+            thread.sendMessage({
+                request: request,
+                resolve: resolve,
+                reject: reject
+            });
+        });
+    }
+    #end
+
     public function makeRequest(request:HttpRequest):Promise<HttpResponse> {
+        #if sys
+        return makeThreadedRequest(request);
+        #else
+        return makeRequestCommon(request);
+        #end
+    }
+
+    public function makeRequestCommon(request:HttpRequest):Promise<HttpResponse> {
         return new Promise((resolve, reject) -> {
             var url = request.url.build(false);
             var http = new Http(url);
