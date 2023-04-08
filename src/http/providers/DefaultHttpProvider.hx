@@ -52,7 +52,7 @@ class DefaultHttpProvider implements IHttpProvider {
         #end
     }
 
-    public function makeRequestCommon(request:HttpRequest):Promise<HttpResponse> {
+    private function makeRequestCommon(request:HttpRequest):Promise<HttpResponse> {
         return new Promise((resolve, reject) -> {
             var url = request.url.build(false);
             var http = new Http(url);
