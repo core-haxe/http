@@ -27,7 +27,7 @@ class DefaultHttpProvider implements IHttpProvider {
     // standard (sync) behaviour of haxe std http
     private function makeThreadedRequest(request:HttpRequest):Promise<HttpResponse> {
         return new Promise((resolve, reject) -> {
-            var thread = sys.thread.Thread.create(() -> {
+            var thread = sys.thread.Thread.createWithEventLoop(() -> {
                 var info:ThreadInfo = sys.thread.Thread.readMessage(true);
                 makeRequestCommon(info.request).then(result -> {
                     info.resolve(result);
