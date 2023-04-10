@@ -8,12 +8,9 @@ import logging.Logger;
 import promises.Promise;
 
 #if target.threaded
-
-private typedef ThreadInfo = {
-    var resolve:HttpResponse->Void;
-    var reject:Any->Void;
-    var ?response:HttpResponse;
-    var ?error:Any;
+enum RequestResult {
+    Success(response:HttpResponse, resolve:HttpResponse->Void);
+    Errored(error:Any, reject:Any->Void);
 }
 #end
 
@@ -24,67 +21,40 @@ class DefaultHttpProvider implements IHttpProvider {
     }
 
     #if target.threaded
-    private static var _nextId:Int = 0;
-    private static var _map:Map<Int, ThreadInfo> = [];
-    private static var _ready:Array<ThreadInfo> = [];
-    private static var mutex:sys.thread.Mutex = new sys.thread.Mutex();
+    private static var _completionQueue:sys.thread.Deque<RequestResult> = new sys.thread.Deque<RequestResult>();
 
     // basic threaded request, which allows for async programming, could / should be greatly 
     // improved by using a thread pool, but for a preliminary impl its better than the
     // standard (sync) behaviour of haxe std http
     private function makeThreadedRequest(request:HttpRequest):Promise<HttpResponse> {
         return new Promise((resolve, reject) -> {
-            mutex.acquire();
-            var currentId = _nextId;
-            _map.set(currentId, {
-                resolve: resolve,
-                reject: reject
-            });
-            _nextId++;
-            mutex.release();
-
-            var thread = sys.thread.Thread.createWithEventLoop(() -> {
+            sys.thread.Thread.createWithEventLoop(() -> {
                 makeRequestCommon(request).then(response -> {
-                    complete(currentId, response);
+                    _completionQueue.push(Success(response, resolve));
                 }, error -> {
-                    errored(currentId, error);
+                    _completionQueue.push(Errored(error, reject));
                 });
             });
         });
     }
 
-    private static function complete(id:Int, response:HttpResponse) {
-        mutex.acquire();
-        var item = _map.get(id);
-        item.response = response;
-        _map.remove(id);
-        _ready.push(item);
-        mutex.release();
-    }   
-    
-    private static function errored(id:Int, error:Any) {
-        mutex.acquire();
-        var item = _map.get(id);
-        item.error = error;
-        _map.remove(id);
-        _ready.push(item);
-        mutex.release();
-    }
-
     private static function onTimer() {
-        var ready = [];
-        mutex.acquire();
-        while (_ready.length > 0) {
-            var item = _ready.shift();
-            ready.push(item); // lets not hold the mutex for any longer than we need to, we'll process them later
+        var complete = [];
+        while(true) {
+            var item = _completionQueue.pop(false);
+            if (item != null) {
+                complete.push(item);
+            } else {
+                break;
+            }
         }
-        mutex.release();
 
-        for (item in ready) {
-            if (item.response != null) {
-                item.resolve(item.response);
-            } else if (item.error != null) {
-                item.reject(item.error);
+        for (item in complete) {
+            switch (item) {
+                case Success(response, resolve):
+                    resolve(response);
+                case Errored(error, reject):    
+                    reject(error);
             }
         }
     }
