@@ -8,10 +8,12 @@ import logging.Logger;
 import promises.Promise;
 
 #if target.threaded
+#if http_threaded_use_completion_queue
 enum RequestResult {
     Success(response:HttpResponse, resolve:HttpResponse->Void);
     Errored(error:Any, reject:Any->Void);
 }
+#end
 #end
 
 class DefaultHttpProvider implements IHttpProvider {
@@ -21,12 +23,17 @@ class DefaultHttpProvider implements IHttpProvider {
     }
 
     #if target.threaded
+
+    #if http_threaded_use_completion_queue
     private static var _completionQueue:sys.thread.Deque<RequestResult> = new sys.thread.Deque<RequestResult>();
+    #end
 
     // basic threaded request, which allows for async programming, could / should be greatly 
     // improved by using a thread pool, but for a preliminary impl its better than the
     // standard (sync) behaviour of haxe std http
     private function makeThreadedRequest(request:HttpRequest):Promise<HttpResponse> {
+        #if http_threaded_use_completion_queue
+
         return new Promise((resolve, reject) -> {
             sys.thread.Thread.createWithEventLoop(() -> {
                 makeRequestCommon(request).then(response -> {
@@ -36,8 +43,25 @@ class DefaultHttpProvider implements IHttpProvider {
                 });
             });
         });
+
+        #else
+
+        return new Promise((resolve, reject) -> {
+            var mainThread = sys.thread.Thread.current();
+            mainThread.events.promise(); // keep main thread alive
+            sys.thread.Thread.createWithEventLoop(() -> {
+                makeRequestCommon(request).then(response -> {
+                    mainThread.events.runPromised(() -> resolve(response));
+                }, error -> {
+                    mainThread.events.runPromised(() -> reject(error));
+                });
+            });
+        });
+
+        #end
     }
 
+    #if http_threaded_use_completion_queue
     private static function onTimer() {
         var complete = [];
         while(true) {
@@ -58,16 +82,22 @@ class DefaultHttpProvider implements IHttpProvider {
             }
         }
     }
+    #end
 
+    #if http_threaded_use_completion_queue
     private static var _timer:haxe.Timer = null;
+    #end
+
     #end
 
     public function makeRequest(request:HttpRequest):Promise<HttpResponse> {
         #if target.threaded
+        #if http_threaded_use_completion_queue
         if (_timer == null) {
             _timer = new haxe.Timer(10);
             _timer.run = onTimer;
         }
+        #end
         #end
         
         #if target.threaded
