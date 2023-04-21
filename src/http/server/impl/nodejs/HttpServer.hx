@@ -93,6 +93,9 @@ class HttpServer extends HttpServerBase {
                     nativeResponse.setHeader(k, v);
                 }
             }
+            // TODO: make optional and restricted
+            nativeResponse.setHeader("Access-Control-Allow-Origin", "*");
+            nativeResponse.setHeader("Access-Control-Allow-Headers", "*");
             if (response.body != null) {
                 var buffer = new Uint8Array(response.body.getData(), 0, response.body.length);
                 nativeResponse.write(buffer);
@@ -115,6 +118,10 @@ class HttpServer extends HttpServerBase {
             if (httpError == null) {
                 httpError = new HttpError("unknown error encountered", HttpStatus.InternalServerError);
             }
+
+            // TODO: make optional and restricted
+            nativeResponse.setHeader("Access-Control-Allow-Origin", "*");
+            nativeResponse.setHeader("Access-Control-Allow-Headers", "*");
 
             nativeResponse.statusCode = httpError.httpStatus;
             if (httpError.body != null) {
