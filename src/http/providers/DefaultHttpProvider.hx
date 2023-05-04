@@ -163,7 +163,6 @@ class DefaultHttpProvider implements IHttpProvider {
                 response.httpStatus = status;
             }
             http.onError = (msg:String) -> {
-                trace(">>>>>>>>>>>>>>>>>>>>>>>>>> HTTP ERROR", msg);
                 var httpError = new HttpError(msg, response.httpStatus);
                 if (http.responseBytes != null) {
                     httpError.body = http.responseBytes;
