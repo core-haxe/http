@@ -1,7 +1,6 @@
 package http;
 
-@:enum
-abstract StandardHeaders(String) from String to String {
+enum abstract StandardHeaders(String) from String to String {
 	// Acceptable instance-manipulations for the request.
 	var AIM = "A-IM";
 	// Media type(s) that is/are acceptable for the response. See Content negotiation.
