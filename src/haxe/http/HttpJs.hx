@@ -101,9 +101,20 @@ class HttpJs extends haxe.http.HttpBase {
 			case [null, bytes]: new Blob([bytes.getData()]);
 			case _: null;
 		}
-		if (uri != null)
+		if (uri != null) {
 			post = true;
-		else
+			if (params != null && params.length > 0) {
+				if (url.indexOf("?") == -1) {
+					url += "?";
+				}
+				for (p in params) {
+					url += StringTools.urlEncode(p.name) + "=" + StringTools.urlEncode(p.value) + "&";
+				}
+				if (StringTools.endsWith(url, "&")) {
+					url = url.substring(0, url.length - 1);
+				}
+			}
+		} else {
 			for (p in params) {
 				if (uri == null)
 					uri = "";
@@ -111,6 +122,7 @@ class HttpJs extends haxe.http.HttpBase {
 					uri = uri + "&";
 				uri = uri + StringTools.urlEncode(p.name) + "=" + StringTools.urlEncode(p.value);
 			}
+		}
 		try {
 			if (post)
 				r.open("POST", url, async);

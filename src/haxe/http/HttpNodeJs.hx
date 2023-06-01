@@ -60,7 +60,19 @@
             if (!StringTools.startsWith(queryParams, "?")) {
                 queryParams = "?" + queryParams;
             }
-        } 
+        }
+        if (params != null && params.length > 0) {
+            if (queryParams == null || queryParams.length == 0) {
+                queryParams = "?";
+            }
+            for (param in params) {
+                queryParams += StringTools.urlEncode(param.name) + "=" + StringTools.urlEncode(param.value) + "&";
+            }
+            if (StringTools.endsWith(queryParams, "&")) {
+                queryParams = queryParams.substring(0, queryParams.length - 1);
+            }
+        }
+
         if (queryParams != null) {
             path += queryParams;
         }
