@@ -254,7 +254,7 @@ class HttpClient {
                 }
     
                 // handle redirections by requeing the request with the new url
-                if (followRedirects && response.httpStatus == 302) {
+                if (followRedirects && (response.httpStatus == 301 || response.httpStatus == 302)) {
                     var redirectLocation:String = null;
                     if (response.headers != null) {
                         redirectLocation = response.headers.get("location");
