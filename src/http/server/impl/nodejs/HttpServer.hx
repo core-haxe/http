@@ -54,6 +54,9 @@ class HttpServer extends HttpServerBase {
             for (fileDir in _fileDirs) {
                 var urlPath = url.path;
                 urlPath = urlPath.urlDecode();
+                if (urlPath == "/") {
+                    urlPath = "/index.html";
+                }
                 if (urlPath.startsWith(fileDir.prefix)) {
                     var relativePath = urlPath.replace(fileDir.prefix, "");
                     var filePath = Path.normalize(fileDir.dir + "/" + relativePath);
