@@ -124,9 +124,13 @@ class HttpJs extends haxe.http.HttpBase {
 			}
 		}
 		try {
-			if (post)
-				r.open("POST", url, async);
-			else if (uri != null) {
+			if (post) {
+				//trace(_customRequestMethod);
+				if (_customRequestMethod == null) {
+					_customRequestMethod = "POST";
+				}
+				r.open(_customRequestMethod, url, async);
+			} else if (uri != null) {
 				var question = url.split("?").length <= 1;
 				r.open("GET", url + (if (question) "?" else "&") + uri, async);
 				uri = null;
