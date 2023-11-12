@@ -75,6 +75,16 @@ class HttpJs extends haxe.http.HttpBase {
 				onStatus(s);
 			if (s != null && s >= 200 && s < 400) {
 				req = null;
+				var heads = r.getAllResponseHeaders().split("\r\n");
+				for (h in heads){
+					if (h!=null && h!=""){
+						var s = h.split(":");
+						if (responseHeaders == null)
+							responseHeaders=[];
+						responseHeaders.set(s[0], (s.length > 1) ? s[1]: null);
+					}
+				}
+				//trace(r.getAllResponseHeaders().split("\n"));
 				success(Bytes.ofData(r.response));
 			} else if (s == null || (s == 0 && r.response == null)) {
 				req = null;
