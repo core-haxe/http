@@ -1,10 +1,10 @@
 package http;
 
 enum abstract HttpMethod(String) from String to String {
-    var Get = "get";
-    var Post = "post";
-    var Put = "put";
-    var Patch = "patch";
-    var Delete = "delete";
-    var Options = "options";
+	var Get = "GET";
+	var Post = "POST";
+	var Put = "PUT";
+	var Patch = "PATCH";
+	var Delete = "DELETE";
+	var Options = "OPTIONS";
 }
