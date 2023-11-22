@@ -60,6 +60,15 @@ class HttpJs extends haxe.http.HttpBase {
 			if (r.readyState != 4)
 				return;
 			var s = try r.status catch (e:Dynamic) null;
+			var heads = r.getAllResponseHeaders().split("\r\n");
+			for (h in heads){
+				if (h!=null && h!=""){
+					var s = h.split(":");
+					if (responseHeaders == null)
+						responseHeaders=[];
+					responseHeaders.set(s[0], (s.length > 1) ? s[1]: null);
+				}
+			}
 			if (s == 0 && js.Browser.supported && js.Browser.location != null) {
 				// If the request is local and we have data: assume a success (jQuery approach):
 				var protocol = js.Browser.location.protocol.toLowerCase();
@@ -74,7 +83,7 @@ class HttpJs extends haxe.http.HttpBase {
 			if (s != null)
 				onStatus(s);
 			if (s != null && s >= 200 && s < 400) {
-				req = null;
+				req = null;				
 				success(Bytes.ofData(r.response));
 			} else if (s == null || (s == 0 && r.response == null)) {
 				req = null;
