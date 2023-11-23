@@ -31,7 +31,7 @@ class TestHttpServer extends Test {
         httpServer.onRequest = (httpRequest, httpResponse) -> {
             return new Promise((resolve, reject) -> {
                 Assert.equals("/foo/bar", httpRequest.url.path);
-                Assert.equals("get", httpRequest.method);
+                Assert.equals("GET", httpRequest.method);
                 httpResponse.write("this is the response");
                 resolve(httpResponse);
             });
@@ -50,7 +50,7 @@ class TestHttpServer extends Test {
         httpServer.onRequest = (httpRequest, httpResponse) -> {
             return new Promise((resolve, reject) -> {
                 Assert.equals("/foo/bar", httpRequest.url.path);
-                Assert.equals("get", httpRequest.method);
+                Assert.equals("GET", httpRequest.method);
                 Assert.equals("value1", httpRequest.queryParams.get("param1"));
                 Assert.equals("value2", httpRequest.queryParams.get("param2"));
                 httpResponse.write("this is the response");
@@ -71,7 +71,7 @@ class TestHttpServer extends Test {
         httpServer.onRequest = (httpRequest, httpResponse) -> {
             return new Promise((resolve, reject) -> {
                 Assert.equals("/foo/bar", httpRequest.url.path);
-                Assert.equals("get", httpRequest.method);
+                Assert.equals("GET", httpRequest.method);
                 Assert.equals("value1", httpRequest.queryParams.get("param1"));
                 Assert.equals("value2", httpRequest.queryParams.get("param2"));
                 httpResponse.write("this is the response");
@@ -92,7 +92,7 @@ class TestHttpServer extends Test {
         httpServer.onRequest = (httpRequest, httpResponse) -> {
             return new Promise((resolve, reject) -> {
                 Assert.equals("/foo/bar", httpRequest.url.path);
-                Assert.equals("get", httpRequest.method);
+                Assert.equals("GET", httpRequest.method);
                 Assert.equals("header_value1", httpRequest.headers.get("header1"));
                 Assert.equals("header_value2", httpRequest.headers.get("header2"));
                 httpResponse.write("this is the response");
@@ -113,7 +113,7 @@ class TestHttpServer extends Test {
         httpServer.onRequest = (httpRequest, httpResponse) -> {
             return new Promise((resolve, reject) -> {
                 Assert.equals("/foo/bar", httpRequest.url.path);
-                Assert.equals("post", httpRequest.method);
+                Assert.equals("POST", httpRequest.method);
                 Assert.equals("this is the request body", httpRequest.body);
                 httpResponse.write("this is the response");
                 resolve(httpResponse);
@@ -133,7 +133,7 @@ class TestHttpServer extends Test {
         httpServer.onRequest = (httpRequest, httpResponse) -> {
             return new Promise((resolve, reject) -> {
                 Assert.equals("/foo/bar", httpRequest.url.path);
-                Assert.equals("get", httpRequest.method);
+                Assert.equals("GET", httpRequest.method);
 
                 throw "this is an exception";
             });
@@ -156,7 +156,7 @@ class TestHttpServer extends Test {
         httpServer.onRequest = (httpRequest, httpResponse) -> {
             return new Promise((resolve, reject) -> {
                 Assert.equals("/foo/bar", httpRequest.url.path);
-                Assert.equals("get", httpRequest.method);
+                Assert.equals("GET", httpRequest.method);
 
                 var httpError = new HttpError("this is the error message", 502);
                 httpError.body = Bytes.ofString("this is the error body");
