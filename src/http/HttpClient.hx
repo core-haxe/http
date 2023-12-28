@@ -263,6 +263,14 @@ class HttpClient {
                         }
                     }
 
+                    var url:Url = Url.fromString(redirectLocation);
+                    var redirectQueryParams:Map<String, Any> = [];
+                    if (url.queryParams != null) {
+                        redirectQueryParams = url.queryParams.copy();
+                    }
+                    redirectQueryParams.remove("location");
+                    redirectQueryParams.remove("Location");
+
                     // we'll consider it an error if there is no location header
                     if (redirectLocation == null) {
                         log.error('redirect encountered (${response.httpStatus}), no location header found');
@@ -276,6 +284,12 @@ class HttpClient {
                     }
 
                     var queryParams = item.request.url.queryParams; // cache original queryParams from url
+                    for (k in redirectQueryParams.keys()) {
+                        if (queryParams == null) {
+                            queryParams = [];
+                        }                    
+                        queryParams.set(k, redirectQueryParams.get(k));
+                    }
                     item.request.url = redirectLocation;
                     item.request.url.queryParams = queryParams;
                     item.retryCount = 0;
