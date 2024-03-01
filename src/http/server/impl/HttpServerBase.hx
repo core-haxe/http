@@ -13,7 +13,10 @@ class HttpServerBase {
 
     private var _fileDirs:Array<FileDir> = null;
 
-    public function new() {
+    private var clustered:Bool = false;
+
+    public function new(clustered:Bool = false) {
+        this.clustered = clustered;
     }
 
     public function start(port:Int) {

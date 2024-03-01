@@ -1,5 +1,7 @@
 package http.server.impl.nodejs;
 
+import js.Node;
+import sys.io.Process;
 import haxe.io.Bytes;
 import haxe.io.Path;
 import http.HttpMethod;
@@ -23,26 +25,52 @@ class HttpServer extends HttpServerBase {
 
     private var _server:NativeServer;
 
-    public function new() {
-        super();
+    public function new(clustered:Bool = false) {
+        super(clustered);
         create();
     }
 
     public override function start(port:Int) {
         log.info('starting server on port ${port}');
-        _server.listen(port);
+        if (!clustered) {
+            _server.listen(port);
+        } else {
+            if (!js.node.Cluster.instance.isMaster) { 
+                _server.listen(port);
+            }
+        }
     }  
    
     private function create() {
+        if (!clustered) {
+            createServer();
+        } else {
+            if (js.node.Cluster.instance.isMaster) {
+                /*
+                js.node.Cluster.instance.setupMaster({
+                    windowsHide: true
+                });
+                */
+                var numCPUs = js.node.Os.cpus().length;
+                for (i in 0...numCPUs) {
+                    js.node.Cluster.instance.fork();
+                }
+            } else {
+                createServer();
+            }
+        }
+    }
+
+    private function createServer() {
         _server = Http.createServer((request, response) -> {
             var data = null;
-			request.on('data', (chunk) -> {
+            request.on('data', (chunk) -> {
                 if (data == null) {
                     data = "";
                 }
                 data += "" + chunk;
-			});
-			request.on('end', () -> {
+            });
+            request.on('end', () -> {
                 processRequest(request, response, data);
             });
         });
