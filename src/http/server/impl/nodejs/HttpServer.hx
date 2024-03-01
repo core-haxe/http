@@ -1,7 +1,5 @@
 package http.server.impl.nodejs;
 
-import js.Node;
-import sys.io.Process;
 import haxe.io.Bytes;
 import haxe.io.Path;
 import http.HttpMethod;
