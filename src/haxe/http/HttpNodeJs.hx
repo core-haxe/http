@@ -66,6 +66,7 @@
         }
          var port = if (parsedUrl.port != null) Std.parseInt(parsedUrl.port) else (secure ? 443 : 80);
          var h:Dynamic = {};
+         /* ORIGINAL CODE ALWAYS SENT HEADERS AS AN ARRAY - this broke if "Host" was used
          for (i in headers) {
              var arr = Reflect.field(h, i.name);
              if (arr == null) {
@@ -75,6 +76,12 @@
  
              arr.push(i.value);
          }
+         */
+        // this sets the header to the value (which could be an array if needed)  
+        for (i in headers) {
+            Reflect.setField(h, i.name, i.value);
+        }
+
          if (postData != null || postBytes != null)
              post = true;
          var uri = null;

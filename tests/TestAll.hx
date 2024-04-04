@@ -22,6 +22,7 @@ class TestAll {
         runner.addCase(new TestRedirect());
         runner.addCase(new TestRequestTransformation());
         runner.addCase(new TestResponseTransformation());
+        runner.addCase(new TestDeepCoin());
         #if nodejs // currently on server impl for nodejs
             runner.addCase(new TestHttpServer());
         #end
