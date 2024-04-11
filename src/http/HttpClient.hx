@@ -35,6 +35,12 @@ class HttpClient {
     public var requestTransformers:Array<IHttpRequestTransformer>;
     public var responseTransformers:Array<IHttpResponseTransformer>;
 
+    /*
+     * Callback that will enable modification of the http request that will be 
+     * requeued
+     */
+    public var onBeforeRedirect:HttpRequest->Void = null;
+
     public function new() {
     }
 
@@ -293,6 +299,9 @@ class HttpClient {
                     item.request.url = redirectLocation;
                     item.request.url.queryParams = queryParams;
                     item.retryCount = 0;
+                    if (onBeforeRedirect != null) {
+                        onBeforeRedirect(item.request);
+                    }
                     requestQueue.requeue(itemId);
                     resolve(true); // ack
                     return;
