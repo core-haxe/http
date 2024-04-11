@@ -270,12 +270,14 @@ class HttpClient {
                     }
 
                     var url:Url = Url.fromString(redirectLocation);
+                    /* possibly ill conceived - should redirect location be taken "as is" and lose any params / headers on original request?
                     var redirectQueryParams:Map<String, Any> = [];
                     if (url.queryParams != null) {
                         redirectQueryParams = url.queryParams.copy();
                     }
                     redirectQueryParams.remove("location");
                     redirectQueryParams.remove("Location");
+                    */
 
                     // we'll consider it an error if there is no location header
                     if (redirectLocation == null) {
@@ -289,6 +291,7 @@ class HttpClient {
                         return;
                     }
 
+                    /* possibly ill conceived - should redirect location be taken "as is" and lose any params / headers on original request?
                     var queryParams = item.request.url.queryParams; // cache original queryParams from url
                     for (k in redirectQueryParams.keys()) {
                         if (queryParams == null) {
@@ -296,8 +299,9 @@ class HttpClient {
                         }                    
                         queryParams.set(k, redirectQueryParams.get(k));
                     }
-                    item.request.url = redirectLocation;
                     item.request.url.queryParams = queryParams;
+                    */
+                    item.request.url = redirectLocation;
                     item.retryCount = 0;
                     if (onBeforeRedirect != null) {
                         onBeforeRedirect(item.request);

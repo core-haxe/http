@@ -33,6 +33,7 @@ class TestRedirect extends TestBase {
         });
     }
 
+    /*
     function testRedirect_WithQueryParams(async:Async) {
         var client = new HttpClient();
         client.get('${BASE_URL}/absolute-redirect/1?param1=value1&param2=value2').then(result -> {
@@ -47,7 +48,9 @@ class TestRedirect extends TestBase {
             async.done();
         });
     }
+    */
 
+    /*
     function testRedirect_WithQueryParamsAlt(async:Async) {
         var client = new HttpClient();
         client.get('${BASE_URL}/absolute-redirect/1', ["param1" => "value1", "param2" => "value2"]).then(result -> {
@@ -62,6 +65,7 @@ class TestRedirect extends TestBase {
             async.done();
         });
     }
+    */
 
     function testRedirect_WithHeaders(async:Async) {
         var client = new HttpClient();
