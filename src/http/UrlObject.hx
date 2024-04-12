@@ -1,6 +1,7 @@
 package http;
 
 import haxe.io.Path;
+
 using StringTools;
 
 class UrlObject {
@@ -111,7 +112,20 @@ class UrlObject {
                     _queryParams = [];
                 }
                 var parts = paramPart.split("=");
-                _queryParams.set(parts[0].trim(), parts[1].trim());
+                var paramName = parts[0];
+                if (paramName == null) {
+                    continue;
+                }
+                paramName = paramName.trim();
+                if (paramName.length == 0) {
+                    continue;
+                }
+                var paramValue = parts[1];
+                if (paramValue != null) {
+                    paramValue = paramValue.trim();
+                }
+
+                _queryParams.set(paramName, paramValue);
             }
             url = "";
         }
