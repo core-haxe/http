@@ -23,7 +23,7 @@ class TestRetry extends TestBase {
     function testRetry_Default(async:Async) {
         var client = new HttpClient();
         client.retryDelayMs = 0;
-        client.get('${BASE_URL}/status/500').then(result -> {
+        client.get('${BASE_URL}/status/500').then(response -> {
             Assert.fail("shouldnt get here");
             async.done();
         }, (error:HttpError) -> {
@@ -37,7 +37,7 @@ class TestRetry extends TestBase {
         var client = new HttpClient();
         client.retryDelayMs = 0;
         client.retryCount = 5;
-        client.get('${BASE_URL}/status/500').then(result -> {
+        client.get('${BASE_URL}/status/500').then(response -> {
             Assert.fail("shouldnt get here");
             async.done();
         }, (error:HttpError) -> {
@@ -51,7 +51,7 @@ class TestRetry extends TestBase {
         var client = new HttpClient();
         client.retryDelayMs = 0;
         client.retryCount = 1;
-        client.get('${BASE_URL}/status/500').then(result -> {
+        client.get('${BASE_URL}/status/500').then(response -> {
             Assert.fail("shouldnt get here");
             async.done();
         }, (error:HttpError) -> {
@@ -65,7 +65,7 @@ class TestRetry extends TestBase {
         var client = new HttpClient();
         client.retryCount = 0;
         client.retryDelayMs = 0;
-        client.get('${BASE_URL}/status/500').then(result -> {
+        client.get('${BASE_URL}/status/500').then(response -> {
             Assert.fail("shouldnt get here");
             async.done();
         }, (error:HttpError) -> {
@@ -79,7 +79,7 @@ class TestRetry extends TestBase {
         var client = new HttpClient();
         client.retryCount = null;
         client.retryDelayMs = 0;
-        client.get('${BASE_URL}/status/500').then(result -> {
+        client.get('${BASE_URL}/status/500').then(response -> {
             Assert.fail("shouldnt get here");
             async.done();
         }, (error:HttpError) -> {

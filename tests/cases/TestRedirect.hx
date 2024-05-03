@@ -22,9 +22,9 @@ class TestRedirect extends TestBase {
 
     function testRedirect(async:Async) {
         var client = new HttpClient();
-        client.get('${BASE_URL}/absolute-redirect/1').then(result -> {
-            Assert.notNull(result.response.body);
-            var json = result.response.bodyAsJson;
+        client.get('${BASE_URL}/absolute-redirect/1').then(response -> {
+            Assert.notNull(response.body);
+            var json = response.bodyAsJson;
             Assert.notNull(json);
             async.done();
         }, (error:HttpError) -> {
@@ -36,9 +36,9 @@ class TestRedirect extends TestBase {
     /*
     function testRedirect_WithQueryParams(async:Async) {
         var client = new HttpClient();
-        client.get('${BASE_URL}/absolute-redirect/1?param1=value1&param2=value2').then(result -> {
-            Assert.notNull(result.response.body);
-            var json = result.response.bodyAsJson;
+        client.get('${BASE_URL}/absolute-redirect/1?param1=value1&param2=value2').then(response -> {
+            Assert.notNull(response.body);
+            var json = response.bodyAsJson;
             Assert.notNull(json);
             Assert.equals("value1", json.args.param1);
             Assert.equals("value2", json.args.param2);
@@ -53,9 +53,9 @@ class TestRedirect extends TestBase {
     /*
     function testRedirect_WithQueryParamsAlt(async:Async) {
         var client = new HttpClient();
-        client.get('${BASE_URL}/absolute-redirect/1', ["param1" => "value1", "param2" => "value2"]).then(result -> {
-            Assert.notNull(result.response.body);
-            var json = result.response.bodyAsJson;
+        client.get('${BASE_URL}/absolute-redirect/1', ["param1" => "value1", "param2" => "value2"]).then(response -> {
+            Assert.notNull(response.body);
+            var json = response.bodyAsJson;
             Assert.notNull(json);
             Assert.equals("value1", json.args.param1);
             Assert.equals("value2", json.args.param2);
@@ -69,9 +69,9 @@ class TestRedirect extends TestBase {
 
     function testRedirect_WithHeaders(async:Async) {
         var client = new HttpClient();
-        client.get('${BASE_URL}/absolute-redirect/1', null, ["Header1" => "header value1", "Header2" => "header value2"]).then(result -> {
-            Assert.notNull(result.response.body);
-            var json = result.response.bodyAsJson;
+        client.get('${BASE_URL}/absolute-redirect/1', null, ["Header1" => "header value1", "Header2" => "header value2"]).then(response -> {
+            Assert.notNull(response.body);
+            var json = response.bodyAsJson;
             Assert.notNull(json);
             Assert.equals("header value1", json.headers.Header1);
             Assert.equals("header value2", json.headers.Header2);
@@ -85,9 +85,9 @@ class TestRedirect extends TestBase {
     function testRedirect_NoRedirect(async:Async) {
         var client = new HttpClient();
         client.followRedirects = false;
-        client.get('${BASE_URL}/absolute-redirect/1').then(result -> {
-            Assert.notNull(result.response.body);
-            Assert.equals(302, result.response.httpStatus);
+        client.get('${BASE_URL}/absolute-redirect/1').then(response -> {
+            Assert.notNull(response.body);
+            Assert.equals(302, response.httpStatus);
             async.done();
         }, (error:HttpError) -> {
             Assert.fail();

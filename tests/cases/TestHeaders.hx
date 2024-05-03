@@ -22,9 +22,9 @@ class TestHeaders extends TestBase {
 
     function testGet(async:Async) {
         var client = new HttpClient();
-        client.get('${BASE_URL}/get', null, ["Header1" => "header value1", "Header2" => "header value2"]).then(result -> {
-            Assert.notNull(result.response.body);
-            var json = result.response.bodyAsJson;
+        client.get('${BASE_URL}/get', null, ["Header1" => "header value1", "Header2" => "header value2"]).then(response -> {
+            Assert.notNull(response.body);
+            var json = response.bodyAsJson;
             Assert.notNull(json);
             Assert.equals(host() + "/get", json.url);
             Assert.equals("header value1", json.headers.Header1);
@@ -38,9 +38,9 @@ class TestHeaders extends TestBase {
 
     function testPost(async:Async) {
         var client = new HttpClient();
-        client.post('${BASE_URL}/post', null, null, ["Header1" => "header value1", "Header2" => "header value2"]).then(result -> {
-            Assert.notNull(result.response.body);
-            var json = result.response.bodyAsJson;
+        client.post('${BASE_URL}/post', null, null, ["Header1" => "header value1", "Header2" => "header value2"]).then(response -> {
+            Assert.notNull(response.body);
+            var json = response.bodyAsJson;
             Assert.notNull(json);
             Assert.equals(host() + "/post", json.url);
             Assert.equals("header value1", json.headers.Header1);
@@ -54,9 +54,9 @@ class TestHeaders extends TestBase {
 
     function testPut(async:Async) {
         var client = new HttpClient();
-        client.put('${BASE_URL}/put', null, null, ["Header1" => "header value1", "Header2" => "header value2"]).then(result -> {
-            Assert.notNull(result.response.body);
-            var json = result.response.bodyAsJson;
+        client.put('${BASE_URL}/put', null, null, ["Header1" => "header value1", "Header2" => "header value2"]).then(response -> {
+            Assert.notNull(response.body);
+            var json = response.bodyAsJson;
             Assert.notNull(json);
             Assert.equals(host() + "/put", json.url);
             Assert.equals("header value1", json.headers.Header1);
@@ -70,9 +70,9 @@ class TestHeaders extends TestBase {
 
     function testDelete(async:Async) {
         var client = new HttpClient();
-        client.delete('${BASE_URL}/delete', null, null, ["Header1" => "header value1", "Header2" => "header value2"]).then(result -> {
-            Assert.notNull(result.response.body);
-            var json = result.response.bodyAsJson;
+        client.delete('${BASE_URL}/delete', null, null, ["Header1" => "header value1", "Header2" => "header value2"]).then(response -> {
+            Assert.notNull(response.body);
+            var json = response.bodyAsJson;
             Assert.notNull(json);
             Assert.equals(host() + "/delete", json.url);
             Assert.equals("header value1", json.headers.Header1);
@@ -91,9 +91,9 @@ class TestHeaders extends TestBase {
             "Header2" => "default header value2",
             "Header3" => "default header value3"
         ];
-        client.get('${BASE_URL}/get', null, ["Header1" => "header value1", "Header2" => "header value2"]).then(result -> {
-            Assert.notNull(result.response.body);
-            var json = result.response.bodyAsJson;
+        client.get('${BASE_URL}/get', null, ["Header1" => "header value1", "Header2" => "header value2"]).then(response -> {
+            Assert.notNull(response.body);
+            var json = response.bodyAsJson;
             Assert.notNull(json);
             Assert.equals(host() + "/get", json.url);
             Assert.equals("header value1", json.headers.Header1);

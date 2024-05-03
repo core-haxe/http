@@ -25,9 +25,9 @@ class TestRequestTransformation extends TestBase {
     function testBasic(async:Async) {
         var client = new HttpClient();
         client.requestTransformers = [new AddHeaders()];
-        client.get('${BASE_URL}/get').then(result -> {
-            Assert.notNull(result.response.body);
-            var json = result.response.bodyAsJson;
+        client.get('${BASE_URL}/get').then(response -> {
+            Assert.notNull(response.body);
+            var json = response.bodyAsJson;
             Assert.notNull(json);
             Assert.equals(host() + "/get", json.url);
             Assert.equals("header value1", json.headers.Headeraddedfromtransformer1);

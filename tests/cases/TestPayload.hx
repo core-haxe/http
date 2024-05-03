@@ -26,9 +26,9 @@ class TestPayload extends TestBase {
     function testPost(async:Async) {
         var client = new HttpClient();
         client.defaultRequestHeaders = [StandardHeaders.ContentType => ContentTypes.ApplicationJson];
-        client.post('${BASE_URL}/post', {foo: "foo string", bar: 111}).then(result -> {
-            Assert.notNull(result.response.body);
-            var json = result.response.bodyAsJson;
+        client.post('${BASE_URL}/post', {foo: "foo string", bar: 111}).then(response -> {
+            Assert.notNull(response.body);
+            var json = response.bodyAsJson;
             Assert.notNull(json);
             Assert.equals(host() + "/post", json.url);
             var data = json.data;
@@ -46,9 +46,9 @@ class TestPayload extends TestBase {
     function testPut(async:Async) {
         var client = new HttpClient();
         client.defaultRequestHeaders = [StandardHeaders.ContentType => ContentTypes.ApplicationJson];
-        client.put('${BASE_URL}/put', {foo: "foo string", bar: 111}).then(result -> {
-            Assert.notNull(result.response.body);
-            var json = result.response.bodyAsJson;
+        client.put('${BASE_URL}/put', {foo: "foo string", bar: 111}).then(response -> {
+            Assert.notNull(response.body);
+            var json = response.bodyAsJson;
             Assert.notNull(json);
             Assert.equals(host() + "/put", json.url);
             var data = json.data;

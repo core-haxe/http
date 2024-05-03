@@ -22,9 +22,9 @@ class TestQueryParamsAndHeaders extends TestBase {
 
     function testGet(async:Async) {
         var client = new HttpClient();
-        client.get('${BASE_URL}/get?param1=value1&param2=value2', null, ["Header1" => "header value1", "Header2" => "header value2"]).then(result -> {
-            Assert.notNull(result.response.body);
-            var json = result.response.bodyAsJson;
+        client.get('${BASE_URL}/get?param1=value1&param2=value2', null, ["Header1" => "header value1", "Header2" => "header value2"]).then(response -> {
+            Assert.notNull(response.body);
+            var json = response.bodyAsJson;
             Assert.notNull(json);
             Assert.equals(host() + "/get?param1=value1&param2=value2", json.url);
             Assert.equals("value1", json.args.param1);
@@ -40,9 +40,9 @@ class TestQueryParamsAndHeaders extends TestBase {
 
     function testPost(async:Async) {
         var client = new HttpClient();
-        client.post('${BASE_URL}/post?param1=value1&param2=value2', null, null, ["Header1" => "header value1", "Header2" => "header value2"]).then(result -> {
-            Assert.notNull(result.response.body);
-            var json = result.response.bodyAsJson;
+        client.post('${BASE_URL}/post?param1=value1&param2=value2', null, null, ["Header1" => "header value1", "Header2" => "header value2"]).then(response -> {
+            Assert.notNull(response.body);
+            var json = response.bodyAsJson;
             Assert.notNull(json);
             Assert.equals(host() + "/post?param1=value1&param2=value2", json.url);
             Assert.equals("value1", json.args.param1);
@@ -58,9 +58,9 @@ class TestQueryParamsAndHeaders extends TestBase {
 
     function testPut(async:Async) {
         var client = new HttpClient();
-        client.put('${BASE_URL}/put?param1=value1&param2=value2', null, null, ["Header1" => "header value1", "Header2" => "header value2"]).then(result -> {
-            Assert.notNull(result.response.body);
-            var json = result.response.bodyAsJson;
+        client.put('${BASE_URL}/put?param1=value1&param2=value2', null, null, ["Header1" => "header value1", "Header2" => "header value2"]).then(response -> {
+            Assert.notNull(response.body);
+            var json = response.bodyAsJson;
             Assert.notNull(json);
             Assert.equals(host() + "/put?param1=value1&param2=value2", json.url);
             Assert.equals("value1", json.args.param1);
@@ -76,9 +76,9 @@ class TestQueryParamsAndHeaders extends TestBase {
 
     function testDelete(async:Async) {
         var client = new HttpClient();
-        client.delete('${BASE_URL}/delete?param1=value1&param2=value2', null, null, ["Header1" => "header value1", "Header2" => "header value2"]).then(result -> {
-            Assert.notNull(result.response.body);
-            var json = result.response.bodyAsJson;
+        client.delete('${BASE_URL}/delete?param1=value1&param2=value2', null, null, ["Header1" => "header value1", "Header2" => "header value2"]).then(response -> {
+            Assert.notNull(response.body);
+            var json = response.bodyAsJson;
             Assert.notNull(json);
             Assert.equals(host() + "/delete?param1=value1&param2=value2", json.url);
             Assert.equals("value1", json.args.param1);

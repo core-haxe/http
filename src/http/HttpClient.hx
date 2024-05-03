@@ -107,9 +107,9 @@ class HttpClient {
      * @param request - The url that is being requested
      * @param queryParams - Add any query parameters
      * @param headers - Add any additional headers that should go along with the request, these will be in addition to the headers set on `defaultHeaders`. \nNote headers specified here will take precedent over ones specified as default
-     * @return Promise<HttpResult>
+     * @return Promise<HttpResponse>
      */
-    public inline function get(request:HttpRequest, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
+    public inline function get(request:HttpRequest, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResponse> {
         request.method = HttpMethod.Get;
         return makeRequest(request, null, queryParams, headers);
     }
@@ -118,9 +118,9 @@ class HttpClient {
      * @param request - The url that is being requested
      * @param queryParams - Add any query parameters
      * @param headers - Add any additional headers that should go along with the request, these will be in addition to the headers set on `defaultHeaders`. \nNote headers specified here will take precedent over ones specified as default
-     * @return Promise<HttpResult>
+     * @return Promise<HttpResponse>
      */
-    public inline function post(request:HttpRequest, body:Any = null, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
+    public inline function post(request:HttpRequest, body:Any = null, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResponse> {
         request.method = HttpMethod.Post;
         return makeRequest(request, body, queryParams, headers);
     }
@@ -130,9 +130,9 @@ class HttpClient {
      * @param body - Add a data object
      * @param queryParams - Add any query parameters
      * @param headers - Add any additional headers that should go along with the request, these will be in addition to the headers set on `defaultHeaders`. \nNote headers specified here will take precedent over ones specified as default
-     * @return Promise<HttpResult>
+     * @return Promise<HttpResponse>
      */
-    public inline function put(request:HttpRequest, body:Any = null, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
+    public inline function put(request:HttpRequest, body:Any = null, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResponse> {
         request.method = HttpMethod.Put;
         return makeRequest(request, body, queryParams, headers);
     }
@@ -142,9 +142,9 @@ class HttpClient {
      * @param body - Add a data object 
      * @param queryParams - Add any query parameters
      * @param headers - Add any additional headers that should go along with the request, these will be in addition to the headers set on `defaultHeaders`. \nNote headers specified here will take precedent over ones specified as default
-     * @return Promise<HttpResult>
+     * @return Promise<HttpResponse>
      */
-    public inline function delete(request:HttpRequest, body:Any = null, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
+    public inline function delete(request:HttpRequest, body:Any = null, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResponse> {
         request.method = HttpMethod.Delete;
         return makeRequest(request, body, queryParams, headers);
     }
@@ -155,9 +155,9 @@ class HttpClient {
      * @param body - Add a data object 
      * @param queryParams - Add any query parameters
      * @param headers - Add any additional headers that should go along with the request, these will be in addition to the headers set on `defaultHeaders`. \nNote headers specified here will take precedent over ones specified as default
-     * @return Promise<HttpResult>
+     * @return Promise<HttpResponse>
      */
-    public function makeRequest(request:HttpRequest, body:Any = null, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResult> {
+    public function makeRequest(request:HttpRequest, body:Any = null, queryParams:Map<String, Any> = null, headers:Map<String, Any> = null):Promise<HttpResponse> {
         var copy = request.clone();
 
         // query params
@@ -312,7 +312,7 @@ class HttpClient {
                 }
 
                 _idToItem.remove(itemId);
-                item.resolve(new HttpResult(this, response));
+                item.resolve(response);
                 resolve(true); // ack
             }, (error:HttpError) -> {
                 if (retryCount == null) {
@@ -346,6 +346,6 @@ class HttpClient {
 typedef RequestQueueItem = {
     var retryCount:Int;
     var request:HttpRequest;
-    var resolve:HttpResult->Void;
+    var resolve:HttpResponse->Void;
     var reject:Dynamic->Void;
 }

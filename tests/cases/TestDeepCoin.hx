@@ -22,8 +22,8 @@ class TestDeepCoin extends TestBase {
         var http = new HttpClient();
         var url = new HttpRequest('https://api.deepcoin.com/deepcoin/market/instruments?instType=SPOT');
         url.method = HttpMethod.Get;
-        http.makeRequest(url).then(result -> {
-            Assert.notNull(result.response.bodyAsJson);
+        http.makeRequest(url).then(response -> {
+            Assert.notNull(response.bodyAsJson);
             async.done();
         }, err -> {
             Assert.fail(err);
@@ -37,8 +37,8 @@ class TestDeepCoin extends TestBase {
         var url = new HttpRequest('https://api.deepcoin.com/deepcoin/market/instruments?instType=SPOT');
         url.method = HttpMethod.Get;
         url.headers = ['Host' => 'api.deepcoin.com', 'User-Agent' => 'CustomApp'];
-        http.makeRequest(url).then(result -> {
-            Assert.notNull(result.response.bodyAsJson);
+        http.makeRequest(url).then(response -> {
+            Assert.notNull(response.bodyAsJson);
             async.done();
         }, err -> {
             Assert.fail(err);

@@ -38,8 +38,8 @@ class TestHttpServer extends Test {
         };
 
         var client = new HttpClient();
-        client.get('http://localhost:${port}/foo/bar').then(result -> {
-            Assert.equals("this is the response", result.response.bodyAsString);
+        client.get('http://localhost:${port}/foo/bar').then(response -> {
+            Assert.equals("this is the response", response.bodyAsString);
             async.done();
         }, error -> {
             Assert.fail();
@@ -59,8 +59,8 @@ class TestHttpServer extends Test {
         };
 
         var client = new HttpClient();
-        client.get('http://localhost:${port}/foo/bar?param1=value1&param2=value2').then(result -> {
-            Assert.equals("this is the response", result.response.bodyAsString);
+        client.get('http://localhost:${port}/foo/bar?param1=value1&param2=value2').then(response -> {
+            Assert.equals("this is the response", response.bodyAsString);
             async.done();
         }, error -> {
             Assert.fail();
@@ -80,8 +80,8 @@ class TestHttpServer extends Test {
         };
 
         var client = new HttpClient();
-        client.get('http://localhost:${port}/foo/bar', ["param1" => "value1", "param2" => "value2"]).then(result -> {
-            Assert.equals("this is the response", result.response.bodyAsString);
+        client.get('http://localhost:${port}/foo/bar', ["param1" => "value1", "param2" => "value2"]).then(response -> {
+            Assert.equals("this is the response", response.bodyAsString);
             async.done();
         }, error -> {
             Assert.fail();
@@ -101,8 +101,8 @@ class TestHttpServer extends Test {
         };
 
         var client = new HttpClient();
-        client.get('http://localhost:${port}/foo/bar', null, ["header1" => "header_value1", "header2" => "header_value2"]).then(result -> {
-            Assert.equals("this is the response", result.response.bodyAsString);
+        client.get('http://localhost:${port}/foo/bar', null, ["header1" => "header_value1", "header2" => "header_value2"]).then(response -> {
+            Assert.equals("this is the response", response.bodyAsString);
             async.done();
         }, error -> {
             Assert.fail();
@@ -121,8 +121,8 @@ class TestHttpServer extends Test {
         };
 
         var client = new HttpClient();
-        client.post('http://localhost:${port}/foo/bar', "this is the request body").then(result -> {
-            Assert.equals("this is the response", result.response.bodyAsString);
+        client.post('http://localhost:${port}/foo/bar', "this is the request body").then(response -> {
+            Assert.equals("this is the response", response.bodyAsString);
             async.done();
         }, error -> {
             Assert.fail();

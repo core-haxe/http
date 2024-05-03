@@ -22,9 +22,9 @@ class TestBasic extends TestBase {
 
     function testGet(async:Async) {
         var client = new HttpClient();
-        client.get('${BASE_URL}/get').then(result -> {
-            Assert.notNull(result.response.body);
-            var json = result.response.bodyAsJson;
+        client.get('${BASE_URL}/get').then(response -> {
+            Assert.notNull(response.body);
+            var json = response.bodyAsJson;
             Assert.notNull(json);
             Assert.equals(host() + "/get", json.url);
             async.done();
@@ -36,9 +36,9 @@ class TestBasic extends TestBase {
 
     function testPost(async:Async) {
         var client = new HttpClient();
-        client.post('${BASE_URL}/post').then(result -> {
-            Assert.notNull(result.response.body);
-            var json = result.response.bodyAsJson;
+        client.post('${BASE_URL}/post').then(response -> {
+            Assert.notNull(response.body);
+            var json = response.bodyAsJson;
             Assert.notNull(json);
             Assert.equals(host() + "/post", json.url);
             async.done();
@@ -50,9 +50,9 @@ class TestBasic extends TestBase {
 
     function testPut(async:Async) {
         var client = new HttpClient();
-        client.put('${BASE_URL}/put').then(result -> {
-            Assert.notNull(result.response.body);
-            var json = result.response.bodyAsJson;
+        client.put('${BASE_URL}/put').then(response -> {
+            Assert.notNull(response.body);
+            var json = response.bodyAsJson;
             Assert.notNull(json);
             Assert.equals(host() + "/put", json.url);
             async.done();
@@ -64,9 +64,9 @@ class TestBasic extends TestBase {
 
     function testDelete(async:Async) {
         var client = new HttpClient();
-        client.delete('${BASE_URL}/delete').then(result -> {
-            Assert.notNull(result.response.body);
-            var json = result.response.bodyAsJson;
+        client.delete('${BASE_URL}/delete').then(response -> {
+            Assert.notNull(response.body);
+            var json = response.bodyAsJson;
             Assert.notNull(json);
             Assert.equals(host() + "/delete", json.url);
             async.done();
