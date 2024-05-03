@@ -30,8 +30,8 @@ client.requestQueue = QueueFactory.instance.createQueue(QueueFactory.SIMPLE_QUEU
 client.defaultRequestHeaders = ["someheader" => "somevalue"];
 client.requestTransformers = [new MyRequestTransformerA(), new MyRequestTransformerB()];
 client.responseTransformers = [new MyResponseTransformerA(), new MyResponseTransformerB()];
-client.get('http://someurl?param1=value1', ["param2" => "value2"], ["header1" => "header value 1"]).then(result -> {
-    var foo = result.response.bodyAsJson.bar;
+client.get('http://someurl?param1=value1', ["param2" => "value2"], ["header1" => "header value 1"]).then(response -> {
+    var foo = response.bodyAsJson.bar;
 }, (error:HttpError) -> {
     // error
 });
@@ -41,8 +41,8 @@ client.get('http://someurl?param1=value1', ["param2" => "value2"], ["header1" =>
 
 ```haxe
 var client = new HttpClient();
-client.post('http://someurl?param1=value1', {foo: "bar"}, ["param2" => "value2"], ["header1" => "header value 1"]).then(result -> {
-    var foo = result.response.bodyAsJson.bar;
+client.post('http://someurl?param1=value1', {foo: "bar"}, ["param2" => "value2"], ["header1" => "header value 1"]).then(response -> {
+    var foo = response.bodyAsJson.bar;
 }, (error:HttpError) -> {
     // error
 });
