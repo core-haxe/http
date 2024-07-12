@@ -5,6 +5,7 @@ class HttpRequestObject {
     public var url:Url;
     public var headers:Map<String, Any>;
     public var body:Any;
+    public var remoteAddress:String;
 
     public function new(url:Url = null, headers:Map<String, Any> = null) {
         this.url = url;
@@ -32,6 +33,7 @@ class HttpRequestObject {
             c.headers = this.headers.copy();
         }
         c.body = this.body;
+        c.remoteAddress = this.remoteAddress;
         if (this._queryParams != null) {
             c._queryParams = this._queryParams.copy();
         }

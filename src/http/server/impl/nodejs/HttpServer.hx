@@ -186,6 +186,7 @@ class HttpServer extends HttpServerBase {
         var url = Url.fromString(nativeRequest.url);
         var request = new HttpRequest(url, dynamicToMap(nativeRequest.headers));
         request.queryParams = url.queryParams;
+        request.remoteAddress = nativeRequest.socket.remoteAddress;
         switch (Std.string(nativeRequest.method).toLowerCase()) {
             case "get": request.method = HttpMethod.Get;
             case "post": request.method = HttpMethod.Post;
