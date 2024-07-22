@@ -1,5 +1,6 @@
 package http.server.impl.nodejs;
 
+import js.node.Https;
 import haxe.io.Bytes;
 import haxe.io.Path;
 import http.HttpMethod;
@@ -9,6 +10,7 @@ import js.node.Fs;
 import js.node.Http;
 import js.node.http.IncomingMessage;
 import js.node.http.Server as NativeServer;
+import js.node.https.Server as NativeSecureServer;
 import js.node.http.ServerResponse as NativeResponse;
 import logging.LogManager;
 import logging.Logger;
@@ -22,25 +24,48 @@ class HttpServer extends HttpServerBase {
     private var log:Logger = new Logger(HttpServer);
 
     private var _server:NativeServer;
+    private var _secureServer:NativeSecureServer;
 
-    public function new(clustered:Bool = false) {
-        super(clustered);
+    public function new(options:HttpServerOptions = null) {
+        super(options);
+        if (options.sslAllowSelfSignedCertificates) {
+            // for self signed certs
+            Sys.putEnv("NODE_TLS_REJECT_UNAUTHORIZED", "0");
+        }
         create();
     }
 
     public override function start(port:Int) {
         log.info('starting server on port ${port}');
-        if (!clustered) {
-            _server.listen(port);
+        if (options.secure) {
+            if (!options.clustered) {
+                _secureServer.listen(port);
+            } else {
+                if (!js.node.Cluster.instance.isMaster) { 
+                    _secureServer.listen(port);
+                }
+            }
         } else {
-            if (!js.node.Cluster.instance.isMaster) { 
+            if (!options.clustered) {
                 _server.listen(port);
+            } else {
+                if (!js.node.Cluster.instance.isMaster) { 
+                    _server.listen(port);
+                }
             }
         }
     }  
+
+    public override function stop() {
+        if (options.secure) {
+            _secureServer.close();
+        } else {
+            _server.close();
+        }
+    }
    
     private function create() {
-        if (!clustered) {
+        if (!options.clustered) {
             createServer();
         } else {
             if (js.node.Cluster.instance.isMaster) {
@@ -60,18 +85,38 @@ class HttpServer extends HttpServerBase {
     }
 
     private function createServer() {
-        _server = Http.createServer((request, response) -> {
-            var data = null;
-            request.on('data', (chunk) -> {
-                if (data == null) {
-                    data = "";
-                }
-                data += "" + chunk;
+        if (options.secure) {
+            var serverOptions:HttpsCreateServerOptions = {
+                key: options.sslPrivateKey,
+                cert: options.sslCertificate,
+                passphrase: options.sslPrivateKeyPassword
+            }
+            _secureServer = Https.createServer(serverOptions, (request, response) -> {
+                var data = null;
+                request.on('data', (chunk) -> {
+                    if (data == null) {
+                        data = "";
+                    }
+                    data += "" + chunk;
+                });
+                request.on('end', () -> {
+                    processRequest(request, response, data);
+                });
             });
-            request.on('end', () -> {
-                processRequest(request, response, data);
+        } else {
+            _server = Http.createServer((request, response) -> {
+                var data = null;
+                request.on('data', (chunk) -> {
+                    if (data == null) {
+                        data = "";
+                    }
+                    data += "" + chunk;
+                });
+                request.on('end', () -> {
+                    processRequest(request, response, data);
+                });
             });
-        });
+        }
     }
     
     private function processRequest(nativeRequest:IncomingMessage, nativeResponse:NativeResponse, payload:String) {

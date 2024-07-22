@@ -13,13 +13,19 @@ class HttpServerBase {
 
     private var _fileDirs:Array<FileDir> = null;
 
-    private var clustered:Bool = false;
+    private var options:HttpServerOptions = {};
 
-    public function new(clustered:Bool = false) {
-        this.clustered = clustered;
+    public function new(options:HttpServerOptions = null) {
+        this.options = options;
+        if (this.options == null) {
+            this.options = {};
+        }
     }
 
     public function start(port:Int) {
+    }
+
+    public function stop() {
     }
 
     public function serveFilesFrom(prefix:String, dir:String) {

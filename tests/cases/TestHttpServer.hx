@@ -1,5 +1,6 @@
 package cases;
 
+import haxe.Resource;
 import haxe.io.Bytes;
 import http.HttpError;
 import http.HttpClient;
@@ -14,17 +15,32 @@ class TestHttpServer extends Test {
     var port:Int = 9876;
     var httpServer:HttpServer;
 
+    private var protocol = "http";
+    private var secure:Bool = false;
+	public function new(secure:Bool = false) {
+        super();
+        this.secure = secure;
+        protocol = (this.secure) ? "https" : "http";
+    }
+
     function setupClass() {
         logging.LogManager.instance.addAdaptor(new logging.adaptors.ConsoleLogAdaptor({
             levels: [logging.LogLevel.Info, logging.LogLevel.Error]
         }));
 
-        httpServer = new HttpServer();
+        httpServer = new HttpServer({
+            secure: this.secure,
+            sslPrivateKey: Resource.getString("private.key"),
+            sslCertificate: Resource.getString("certificate.crt"),
+            sslPrivateKeyPassword: "changeit",
+            sslAllowSelfSignedCertificates: true
+        });
         httpServer.start(port);
     }
 
     function teardownClass() {
         logging.LogManager.instance.clearAdaptors();
+        httpServer.stop();
     }
 
     function testBasic(async:Async) {
@@ -38,7 +54,7 @@ class TestHttpServer extends Test {
         };
 
         var client = new HttpClient();
-        client.get('http://localhost:${port}/foo/bar').then(response -> {
+        client.get('${protocol}://localhost:${port}/foo/bar').then(response -> {
             Assert.equals("this is the response", response.bodyAsString);
             async.done();
         }, error -> {
@@ -59,7 +75,7 @@ class TestHttpServer extends Test {
         };
 
         var client = new HttpClient();
-        client.get('http://localhost:${port}/foo/bar?param1=value1&param2=value2').then(response -> {
+        client.get('${protocol}://localhost:${port}/foo/bar?param1=value1&param2=value2').then(response -> {
             Assert.equals("this is the response", response.bodyAsString);
             async.done();
         }, error -> {
@@ -80,7 +96,7 @@ class TestHttpServer extends Test {
         };
 
         var client = new HttpClient();
-        client.get('http://localhost:${port}/foo/bar', ["param1" => "value1", "param2" => "value2"]).then(response -> {
+        client.get('${protocol}://localhost:${port}/foo/bar', ["param1" => "value1", "param2" => "value2"]).then(response -> {
             Assert.equals("this is the response", response.bodyAsString);
             async.done();
         }, error -> {
@@ -101,7 +117,7 @@ class TestHttpServer extends Test {
         };
 
         var client = new HttpClient();
-        client.get('http://localhost:${port}/foo/bar', null, ["header1" => "header_value1", "header2" => "header_value2"]).then(response -> {
+        client.get('${protocol}://localhost:${port}/foo/bar', null, ["header1" => "header_value1", "header2" => "header_value2"]).then(response -> {
             Assert.equals("this is the response", response.bodyAsString);
             async.done();
         }, error -> {
@@ -121,7 +137,7 @@ class TestHttpServer extends Test {
         };
 
         var client = new HttpClient();
-        client.post('http://localhost:${port}/foo/bar', "this is the request body").then(response -> {
+        client.post('${protocol}://localhost:${port}/foo/bar', "this is the request body").then(response -> {
             Assert.equals("this is the response", response.bodyAsString);
             async.done();
         }, error -> {
@@ -140,7 +156,7 @@ class TestHttpServer extends Test {
         };
 
         var client = new HttpClient();
-        client.get('http://localhost:${port}/foo/bar').then(result -> {
+        client.get('${protocol}://localhost:${port}/foo/bar').then(result -> {
             Assert.fail();
             return null;
         }, (error:HttpError) -> {
@@ -165,7 +181,7 @@ class TestHttpServer extends Test {
         };
 
         var client = new HttpClient();
-        client.get('http://localhost:${port}/foo/bar').then(result -> {
+        client.get('${protocol}://localhost:${port}/foo/bar').then(result -> {
             Assert.fail();
             return null;
         }, (error:HttpError) -> {

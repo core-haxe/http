@@ -25,6 +25,7 @@ class TestAll {
         runner.addCase(new TestDeepCoin());
         #if nodejs // currently on server impl for nodejs
             runner.addCase(new TestHttpServer());
+            runner.addCase(new TestHttpsServer());
         #end
 
         Report.create(runner, SuccessResultsDisplayMode.AlwaysShowSuccessResults, HeaderDisplayMode.NeverShowHeader);

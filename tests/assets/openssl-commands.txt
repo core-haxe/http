@@ -1,0 +1,11 @@
+openssl genrsa -aes128 -out private.key 2048
+openssl req -new -days 358000 -key private.key -out request.csr
+
+openssl x509 -in request.csr -out certificate.crt -req -signkey private.key -days 358000
+
+if using self signed cert, need to set: NODE_TLS_REJECT_UNAUTHORIZED=0, eg on windows:
+
+```
+set NODE_TLS_REJECT_UNAUTHORIZED=0
+node test-all.js
+```

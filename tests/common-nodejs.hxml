@@ -6,3 +6,6 @@
 
 -lib hxnodejs
 -D no-deprecation-warnings
+
+--resource assets/certificate.crt@certificate.crt
+--resource assets/private.key@private.key
