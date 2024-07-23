@@ -28,7 +28,7 @@ class HttpServer extends HttpServerBase {
 
     public function new(options:HttpServerOptions = null) {
         super(options);
-        if (options.sslAllowSelfSignedCertificates) {
+        if (options != null && options.sslAllowSelfSignedCertificates) {
             // for self signed certs
             Sys.putEnv("NODE_TLS_REJECT_UNAUTHORIZED", "0");
         }
