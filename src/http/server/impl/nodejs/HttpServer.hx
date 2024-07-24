@@ -1,6 +1,5 @@
 package http.server.impl.nodejs;
 
-import js.node.Https;
 import haxe.io.Bytes;
 import haxe.io.Path;
 import http.HttpMethod;
@@ -8,10 +7,11 @@ import js.lib.Error;
 import js.lib.Uint8Array;
 import js.node.Fs;
 import js.node.Http;
+import js.node.Https;
 import js.node.http.IncomingMessage;
 import js.node.http.Server as NativeServer;
-import js.node.https.Server as NativeSecureServer;
 import js.node.http.ServerResponse as NativeResponse;
+import js.node.https.Server as NativeSecureServer;
 import logging.LogManager;
 import logging.Logger;
 import promises.Promise;
@@ -36,8 +36,8 @@ class HttpServer extends HttpServerBase {
     }
 
     public override function start(port:Int) {
-        log.info('starting server on port ${port}');
         if (options.secure) {
+            log.info('starting secure server on port ${port}');
             if (!options.clustered) {
                 _secureServer.listen(port);
             } else {
@@ -46,6 +46,7 @@ class HttpServer extends HttpServerBase {
                 }
             }
         } else {
+            log.info('starting server on port ${port}');
             if (!options.clustered) {
                 _server.listen(port);
             } else {
