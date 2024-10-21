@@ -6,6 +6,8 @@ import logging.LogManager;
 import logging.Logger;
 import promises.Promise;
 
+#if (sys || hxnodejs)
+
 class HttpServerBase {
     private var baseLog:Logger = new Logger(HttpServerBase);
 
@@ -45,3 +47,26 @@ typedef FileDir = {
     var prefix:String;
     var dir:String;
 }
+
+#else
+
+class HttpServerBase {
+    public var onRequest:HttpRequest->HttpResponse->Promise<HttpResponse> = null;
+    
+    private var options:HttpServerOptions = {};
+
+    public function new(options:HttpServerOptions = null) {
+        this.options = options;
+        if (this.options == null) {
+            this.options = {};
+        }
+    }
+
+    public function start(port:Int) {
+    }
+
+    public function stop() {
+    }
+}
+
+#end
