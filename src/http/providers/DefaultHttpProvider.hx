@@ -7,7 +7,7 @@ import logging.LogManager;
 import logging.Logger;
 import promises.Promise;
 
-#if target.threaded
+#if (target.threaded && !http_no_threads)
 #if http_threaded_use_completion_queue
 enum RequestResult {
     Success(response:HttpResponse, resolve:HttpResponse->Void);
@@ -22,7 +22,7 @@ class DefaultHttpProvider implements IHttpProvider {
     public function new() {
     }
 
-    #if target.threaded
+    #if (target.threaded && !http_no_threads)
 
     #if http_threaded_use_completion_queue
     private static var _completionQueue:sys.thread.Deque<RequestResult> = new sys.thread.Deque<RequestResult>();
@@ -91,7 +91,7 @@ class DefaultHttpProvider implements IHttpProvider {
     #end
 
     public function makeRequest(request:HttpRequest):Promise<HttpResponse> {
-        #if target.threaded
+        #if (target.threaded && !http_no_threads)
         #if http_threaded_use_completion_queue
         if (_timer == null) {
             _timer = new haxe.Timer(10);
@@ -100,7 +100,7 @@ class DefaultHttpProvider implements IHttpProvider {
         #end
         #end
         
-        #if target.threaded
+        #if (target.threaded && !http_no_threads)
         return makeThreadedRequest(request);
         #else
         return makeRequestCommon(request);
