@@ -10,7 +10,7 @@
     "classPath": "src",
     "releasenote": "0.0.0",
     "dependencies": {
-        "promises": "git:https://github.com/core-haxe/promises",
+        "promises": "",
         "logging": "",
         "queues-core": ""
     },
