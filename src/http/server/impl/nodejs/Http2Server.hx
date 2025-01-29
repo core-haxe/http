@@ -1,31 +1,17 @@
 package http.server.impl.nodejs;
 
+import js.node.Buffer;
 import haxe.io.Bytes;
-import haxe.io.Path;
-import http.HttpMethod;
-import js.lib.Error;
-import js.lib.Uint8Array;
-import js.node.Fs;
-import js.node.Http;
-import js.node.Https;
-import js.node.http.IncomingMessage;
-import js.node.http.Server as NativeServer;
-import js.node.http.ServerResponse as NativeResponse;
-import js.node.https.Server as NativeSecureServer;
-import logging.LogManager;
-import logging.Logger;
-import promises.Promise;
+import js.Node;
 import sys.FileSystem;
-import sys.io.File;
+import haxe.io.Path;
+import js.node.Fs;
+import js.lib.Uint8Array;
+import js.lib.Error;
 
 using StringTools;
 
-class HttpServer extends HttpServerCommon {
-    private var log:Logger = new Logger(HttpServer);
-
-    private var _server:NativeServer;
-    private var _secureServer:NativeSecureServer;
-
+class Http2Server extends HttpServerCommon {
     public function new(options:HttpServerOptions = null) {
         super(options);
         if (options != null && options.sslAllowSelfSignedCertificates) {
@@ -35,36 +21,6 @@ class HttpServer extends HttpServerCommon {
         create();
     }
 
-    public override function start(port:Int) {
-        if (options.secure) {
-            log.info('starting secure server on port ${port}');
-            if (!options.clustered) {
-                _secureServer.listen(port);
-            } else {
-                if (!js.node.Cluster.instance.isMaster) { 
-                    _secureServer.listen(port);
-                }
-            }
-        } else {
-            log.info('starting server on port ${port}');
-            if (!options.clustered) {
-                _server.listen(port);
-            } else {
-                if (!js.node.Cluster.instance.isMaster) { 
-                    _server.listen(port);
-                }
-            }
-        }
-    }  
-
-    public override function stop() {
-        if (options.secure) {
-            _secureServer.close();
-        } else {
-            _server.close();
-        }
-    }
-   
     /*
     private function create() {
         if (!options.clustered) {
@@ -82,7 +38,57 @@ class HttpServer extends HttpServerCommon {
     }
     */
 
+    private var server:Dynamic;
     private override function createServer() {
+        var http2 = Node.require("node:http2");
+        server = http2.createSecureServer({
+            key: options.sslPrivateKey,
+            cert: options.sslCertificate,
+            passphrase: options.sslPrivateKeyPassword
+        });
+
+        server.on('error', (err) -> trace(err));
+
+        server.on('stream', (stream:Dynamic, headers:Dynamic) -> {
+            var chunks = [];
+            stream.on('data', function(chunk) {
+                chunks.push(chunk);
+            });
+
+            stream.on('end', function() {
+                var body = Buffer.concat(chunks);
+                chunks = [];
+
+                // stream is a Duplex
+                processRequest(stream, headers, body.toString());
+                /*
+                if (response != null) {
+                    var nativeHeaders:Dynamic = {};
+                    if (response.headers != null) {
+                        for (key in response.headers.keys()) {
+                            Reflect.setField(nativeHeaders, key, response.headers.get(key));
+                        }
+                    }
+                    stream.respond(nativeHeaders);
+                    if (response.payload != null) {
+                        stream.end(response.payload);
+                    } else {
+                        stream.end();
+                    }
+                }
+                */    
+
+                /*
+                stream.respond({
+                    'content-type': 'text/html; charset=utf-8',
+                    ':status': 200,
+                });
+                stream.end('<h1>Hello World</h1>');
+                */
+            });
+        });
+        
+        /*
         if (options.secure) {
             var serverOptions:HttpsCreateServerOptions = {
                 key: options.sslPrivateKey,
@@ -115,13 +121,13 @@ class HttpServer extends HttpServerCommon {
                 });
             });
         }
+        */    
     }
-    
-    private function processRequest(nativeRequest:IncomingMessage, nativeResponse:NativeResponse, payload:String) {
+
+    private function processRequest(stream:Dynamic, headers:Dynamic, payload:String):Void {
         if (_fileDirs != null && _fileDirs.length != 0) {
-            var url = Url.fromString(nativeRequest.url);
             for (fileDir in _fileDirs) {
-                var urlPath = url.path;
+                var urlPath:String = Reflect.field(headers, ":path");
                 urlPath = urlPath.urlDecode();
                 if (urlPath == "/") {
                     urlPath = "/index.html";
@@ -130,13 +136,14 @@ class HttpServer extends HttpServerCommon {
                     var relativePath = urlPath.replace(fileDir.prefix, "");
                     var filePath = Path.normalize(fileDir.dir + "/" + relativePath);
                     if (FileSystem.exists(filePath)) {
-                        serveFile(filePath, nativeRequest, nativeResponse);
+                        serveFile(filePath, stream, headers);
                         return;
                     }
                 }
             }
         }
 
+        /*
         var ip = nativeRequest.socket.remoteAddress;
         log.info('incoming ${nativeRequest.method} request to "${nativeRequest.url}" from "${ip}"');
         if (LogManager.instance.shouldLogData) {
@@ -145,34 +152,68 @@ class HttpServer extends HttpServerCommon {
                 log.data('payload', payload);
             }
         }
-
+        */
+        
         if (onRequest == null) {
-            nativeResponse.statusCode = HttpStatus.NotFound;
-            nativeResponse.end();
+            //nativeResponse.statusCode = HttpStatus.NotFound;
+            //nativeResponse.end();
+            //return { headers: [':status' => HttpStatus.NotFound] } ;
+            stream.respond({
+                ':status': HttpStatus.NotFound
+            });
+            stream.end();
             return;
         }
-
-        var request = nativeRequestToHttpRequest(nativeRequest, payload);
+        
+        var request = nativeRequestToHttpRequest(stream, headers, payload);
         var response = new HttpResponse();
         response.httpStatus = HttpStatus.Success;
         response.headers = [];
         response.headers.set(StandardHeaders.ContentType, ContentTypes.TextPlain);
+        var nativeResponse2:{headers:Map<String, Any>, payload:Any} = { headers: [], payload: null};
         onRequest(request, response).then(response -> {
-            nativeResponse.statusCode = response.httpStatus;
+            //nativeResponse.statusCode = response.httpStatus;
+            nativeResponse2.headers.set(":status", response.httpStatus);
             if (response.headers != null) {
                 for (k in response.headers.keys()) {
                     var v = response.headers.get(k);
-                    nativeResponse.setHeader(k, v);
+                    //nativeResponse.setHeader(k, v);
+                    nativeResponse2.headers.set(k, v);
                 }
             }
             // TODO: make optional and restricted
+            /*
             nativeResponse.setHeader("Access-Control-Allow-Origin", "*");
             nativeResponse.setHeader("Access-Control-Allow-Headers", "*");
+            */
+            nativeResponse2.headers.set("Access-Control-Allow-Origin", "*");
+            nativeResponse2.headers.set("Access-Control-Allow-Headers", "*");
+            if (response.body != null) {
+                var buffer = new Uint8Array(response.body.getData(), 0, response.body.length);
+                nativeResponse2.payload = buffer;
+            }
+            /*
             if (response.body != null) {
                 var buffer = new Uint8Array(response.body.getData(), 0, response.body.length);
                 nativeResponse.write(buffer);
             }
             nativeResponse.end();
+            */
+
+            var nativeHeaders:Dynamic = {};
+            if (nativeResponse2.headers != null) {
+                for (key in nativeResponse2.headers.keys()) {
+                    Reflect.setField(nativeHeaders, key, nativeResponse2.headers.get(key));
+                }
+            }
+            stream.respond(nativeHeaders);
+            if (nativeResponse2.payload != null) {
+                stream.end(nativeResponse2.payload);
+            } else {
+                stream.end();
+            }
+
+
         }, error -> {
             var httpError:HttpError = null;
             if ((error is HttpError)) {
@@ -192,45 +233,53 @@ class HttpServer extends HttpServerCommon {
             }
 
             // TODO: make optional and restricted
+            /*
             nativeResponse.setHeader("Access-Control-Allow-Origin", "*");
             nativeResponse.setHeader("Access-Control-Allow-Headers", "*");
+            */
+            nativeResponse2.headers.set("Access-Control-Allow-Origin", "*");
+            nativeResponse2.headers.set("Access-Control-Allow-Headers", "*");
+
             if (httpError.headers != null) {
                 for (key in httpError.headers.keys()) {
-                    nativeResponse.setHeader(key, httpError.headers.get(key));
+                    //nativeResponse.setHeader(key, httpError.headers.get(key));
+                    nativeResponse2.headers.set(key, httpError.headers.get(key));
                 }
             }
 
-            nativeResponse.statusCode = httpError.httpStatus;
+            //nativeResponse.statusCode = httpError.httpStatus;
+            nativeResponse2.headers.set(":status", httpError.httpStatus);
             if (httpError.body != null) {
                 var buffer = new Uint8Array(httpError.body.getData(), 0, httpError.body.length);
-                nativeResponse.write(buffer);
+                nativeResponse2.payload = buffer;
+                //nativeResponse.write(buffer);
+
             }
-            nativeResponse.end();
+            //nativeResponse.end();
+
+            var nativeHeaders:Dynamic = {};
+            if (nativeResponse2.headers != null) {
+                for (key in nativeResponse2.headers.keys()) {
+                    Reflect.setField(nativeHeaders, key, nativeResponse2.headers.get(key));
+                }
+            }
+            stream.respond(nativeHeaders);
+            if (nativeResponse2.payload != null) {
+                stream.end(nativeResponse2.payload);
+            } else {
+                stream.end();
+            }
+
         });
     }
 
-    private function serveFile(filePath:String, nativeRequest:IncomingMessage, nativeResponse:NativeResponse) {
-        log.info('serving file "${filePath}"');
-        Fs.readFile(filePath, (error, buffer) -> {
-            if (error != null) {
-                return;
-            }
-
-            // TODO: make optional and restricted
-            nativeResponse.setHeader("Access-Control-Allow-Origin", "*");
-            nativeResponse.setHeader("Access-Control-Allow-Headers", "*");
-
-            nativeResponse.write(buffer);
-            nativeResponse.end();
-        });
-    }
-
-    private function nativeRequestToHttpRequest(nativeRequest:IncomingMessage, payload:String):HttpRequest {
-        var url = Url.fromString(nativeRequest.url);
-        var request = new HttpRequest(url, dynamicToMap(nativeRequest.headers));
+    private function nativeRequestToHttpRequest(stream:Dynamic, headers:Dynamic, payload:String):HttpRequest {
+        var urlPath:String = Reflect.field(headers, ":path");
+        var url = Url.fromString(urlPath);
+        var request = new HttpRequest(url, dynamicToMap(headers));
         request.queryParams = url.queryParams;
-        request.remoteAddress = nativeRequest.socket.remoteAddress;
-        switch (Std.string(nativeRequest.method).toLowerCase()) {
+        //request.remoteAddress = nativeRequest.socket.remoteAddress;
+        switch (Std.string(Reflect.field(headers, ":method")).toLowerCase()) {
             case "get": request.method = HttpMethod.Get;
             case "post": request.method = HttpMethod.Post;
             case "put": request.method = HttpMethod.Put;
@@ -248,5 +297,26 @@ class HttpServer extends HttpServerCommon {
             map.set(f, Reflect.field(o, f));
         }
         return map;
+    }
+
+    private function serveFile(filePath:String, stream:Dynamic, headers:Dynamic) {
+        Fs.readFile(filePath, (error, buffer) -> {
+            if (error != null) {
+                return;
+            }
+
+            // TODO: make optional and restricted
+            stream.respond({
+                ':status': 200,
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': '*'
+            }); 
+            stream.end(buffer);
+        });
+    }
+
+    public override function start(port:Int) {
+        trace(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> L", port);
+        server.listen(port);
     }
 }
