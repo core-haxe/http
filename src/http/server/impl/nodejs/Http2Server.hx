@@ -44,7 +44,8 @@ class Http2Server extends HttpServerCommon {
         server = http2.createSecureServer({
             key: options.sslPrivateKey,
             cert: options.sslCertificate,
-            passphrase: options.sslPrivateKeyPassword
+            passphrase: options.sslPrivateKeyPassword,
+            allowHTTP1: true
         });
 
         server.on('error', (err) -> trace(err));
