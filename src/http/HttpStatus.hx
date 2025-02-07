@@ -1,9 +1,9 @@
 package http;
 
-@:enum
-abstract HttpStatus(Int) from Int to Int {
+enum abstract HttpStatus(Int) from Int to Int {
     var Success = 200;
     var NotFound = 404;
     var MethodNotAllowed = 405;
+    var TooManyRequests = 429;
     var InternalServerError = 500;
 }
