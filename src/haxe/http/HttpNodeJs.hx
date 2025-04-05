@@ -149,6 +149,9 @@
              }
  
          req.end();
+         req.on('error', function(e) {
+            onError("No connection");
+         });
      }
  
      private var _customRequestMethod:String = null;
