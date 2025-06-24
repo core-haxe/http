@@ -238,6 +238,19 @@ class HttpClient {
 
             var method:String = request.method;
             log.info('making "${method.toLowerCase()}" request to "${request.url.build()}"');
+            if (request.method == HttpMethod.Post && !request.headers.exists(StandardHeaders.ContentLength)) {
+                if (request.body == null) {
+                    request.headers.set(StandardHeaders.ContentLength, 0);
+                } else if (request.body is String) {
+                    var stringBody:String = request.body;
+                    request.headers.set(StandardHeaders.ContentLength, stringBody.length);
+                } else if (request.body is haxe.io.Bytes) {
+                    var bytesBody:haxe.io.Bytes = request.body;
+                    request.headers.set(StandardHeaders.ContentLength, bytesBody.length);
+                } else {
+                    request.headers.set(StandardHeaders.ContentLength, Std.string(request.body).length);
+                }
+            }
             provider.makeRequest(request).then(response -> {
                 if (response != null) {
                     if (LogManager.instance.shouldLogDebug) {
