@@ -238,6 +238,7 @@ class HttpClient {
 
             var method:String = request.method;
             log.info('making "${method.toLowerCase()}" request to "${request.url.build()}"');
+            #if http_auto_calculate_content_length
             if (request.method == HttpMethod.Post && !request.headers.exists(StandardHeaders.ContentLength)) {
                 if (request.body == null) {
                     request.headers.set(StandardHeaders.ContentLength, 0);
@@ -251,6 +252,7 @@ class HttpClient {
                     request.headers.set(StandardHeaders.ContentLength, Std.string(request.body).length);
                 }
             }
+            #end
             provider.makeRequest(request).then(response -> {
                 if (response != null) {
                     if (LogManager.instance.shouldLogDebug) {
