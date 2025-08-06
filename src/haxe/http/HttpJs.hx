@@ -28,6 +28,7 @@ import js.html.Blob;
 import js.html.XMLHttpRequestResponseType;
 
 class HttpJs extends haxe.http.HttpBase {
+	public var encodeUrl:Bool = true;
 	public var async:Bool;
 	public var withCredentials:Bool;
 
