@@ -5,7 +5,7 @@ import haxe.io.Bytes;
 import haxe.io.BytesBuffer;
 import haxe.io.Encoding;
 
-class HttpResponse {
+class HttpResponse#if (haxe >= "4.3")<T = Dynamic>#end {
     public var httpStatus:Int;
     public var headers:Map<String, Any>;
 
@@ -54,8 +54,8 @@ class HttpResponse {
         return body.toString();
     }
 
-    public var bodyAsJson(get, null):Dynamic;
-    private function get_bodyAsJson():Dynamic {
+    public var bodyAsJson(get, null):T;
+    private function get_bodyAsJson():T {
         if (body == null) {
             return null;
         }
