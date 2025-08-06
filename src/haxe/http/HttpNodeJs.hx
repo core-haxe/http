@@ -90,8 +90,16 @@
                  uri = "";
              else
                  uri += "&";
-             uri += StringTools.urlEncode(p.name) + "=" + StringTools.urlEncode(p.value);
+          
+         				var k = p.name;
+         				var v = p.value;
+         				if (encodeUrl) {
+         					k = StringTools.urlEncode(p.name);
+         					v = StringTools.urlEncode(p.value);
+         				}
+         				uri += k + "=" + v;
          }
+      
          var question = path.split("?").length <= 1;
          if (uri != null)
              path += (if (question) "?" else "&") + uri;
