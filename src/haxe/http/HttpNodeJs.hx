@@ -28,6 +28,7 @@
  import js.node.Buffer;
  import js.node.url.URL;
  class HttpNodeJs extends haxe.http.HttpBase {
+     public var encodeUrl:Bool = true;
      var req:js.node.http.ClientRequest;
  
      public var responseHeaders:Map<String, Any>;
