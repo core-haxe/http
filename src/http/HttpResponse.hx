@@ -5,7 +5,6 @@ import haxe.io.Bytes;
 import haxe.io.BytesBuffer;
 import haxe.io.Encoding;
 
-
 class HttpResponse#if (haxe >= "4.3")<T = Dynamic>#end {
     public var httpStatus:Int;
     public var headers:Map<String, Any>;
