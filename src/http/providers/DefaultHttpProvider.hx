@@ -17,6 +17,7 @@ enum RequestResult {
 #end
 
 class DefaultHttpProvider implements IHttpProvider {
+    public var encodeUrl:Bool = true;
     private var log:Logger = new Logger(DefaultHttpProvider);
 
     public function new() {

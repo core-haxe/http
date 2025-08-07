@@ -70,11 +70,20 @@ class HttpClient {
         return value;
     }
 
+    @:isVar public var encodeUrl(default, set):Bool = true;
+    function set_encodeUrl(value) {
+        if (_provider != null) {
+            _provider.encodeUrl = value;
+        }
+        return encodeUrl = value;
+    }
+    
     private var _provider:IHttpProvider = null;
     public var provider(get, set):IHttpProvider;
     private function get_provider():IHttpProvider {
         if (_provider == null) {
             _provider = new DefaultHttpProvider();
+		    _provider.encodeUrl = encodeUrl;
         }
         return _provider;
     }
