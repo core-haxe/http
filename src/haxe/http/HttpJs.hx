@@ -28,6 +28,7 @@ import js.html.Blob;
 import js.html.XMLHttpRequestResponseType;
 
 class HttpJs extends haxe.http.HttpBase {
+	public var encodeUrl:Bool = true;
 	public var async:Bool;
 	public var withCredentials:Bool;
 
@@ -121,7 +122,13 @@ class HttpJs extends haxe.http.HttpBase {
 					url += "?";
 				}
 				for (p in params) {
-					url += StringTools.urlEncode(p.name) + "=" + StringTools.urlEncode(p.value) + "&";
+					var k = p.name;
+					var v = p.value;
+					if (encodeUrl) {
+						k = StringTools.urlEncode(p.name);
+						v = StringTools.urlEncode(p.value);
+					}
+					uri += k + "=" + v + "&";
 				}
 				if (StringTools.endsWith(url, "&")) {
 					url = url.substring(0, url.length - 1);
@@ -133,7 +140,14 @@ class HttpJs extends haxe.http.HttpBase {
 					uri = "";
 				else
 					uri = uri + "&";
-				uri = uri + StringTools.urlEncode(p.name) + "=" + StringTools.urlEncode(p.value);
+				
+				var k = p.name;
+				var v = p.value;
+				if (encodeUrl) {
+					k = StringTools.urlEncode(p.name);
+					v = StringTools.urlEncode(p.value);
+				}
+				uri += k + "=" + v + "&";
 			}
 		}
 		try {
