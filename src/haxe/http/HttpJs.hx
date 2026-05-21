@@ -128,7 +128,7 @@ class HttpJs extends haxe.http.HttpBase {
 						k = StringTools.urlEncode(p.name);
 						v = StringTools.urlEncode(p.value);
 					}
-					uri += k + "=" + v + "&";
+					url += k + "=" + v + "&";
 				}
 				if (StringTools.endsWith(url, "&")) {
 					url = url.substring(0, url.length - 1);
