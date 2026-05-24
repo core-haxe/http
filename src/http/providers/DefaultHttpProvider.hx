@@ -29,7 +29,7 @@ class DefaultHttpProvider implements IHttpProvider {
     private static var _completionQueue:sys.thread.Deque<RequestResult> = new sys.thread.Deque<RequestResult>();
     #end
 
-    // basic threaded request, which allows for async programming, could / should be greatly 
+    // basic threaded request, which allows for async programming, could / should be greatly
     // improved by using a thread pool, but for a preliminary impl its better than the
     // standard (sync) behaviour of haxe std http
     private function makeThreadedRequest(request:HttpRequest):Promise<HttpResponse> {
@@ -78,7 +78,7 @@ class DefaultHttpProvider implements IHttpProvider {
             switch (item) {
                 case Success(response, resolve):
                     resolve(response);
-                case Errored(error, reject):    
+                case Errored(error, reject):
                     reject(error);
             }
         }
@@ -100,7 +100,7 @@ class DefaultHttpProvider implements IHttpProvider {
         }
         #end
         #end
-        
+
         #if (target.threaded && !http_no_threads)
         return makeThreadedRequest(request);
         #else
@@ -206,7 +206,7 @@ class DefaultHttpProvider implements IHttpProvider {
 
                     #else
 
-                    http.customRequest(true, "PUT");    
+                    http.customRequest(true, "PUT");
                     http.request(true);
 
                     #end
@@ -217,7 +217,18 @@ class DefaultHttpProvider implements IHttpProvider {
 
                     #else
 
-                    http.customRequest(true, "DELETE");    
+                    http.customRequest(true, "DELETE");
+                    http.request(true);
+
+                    #end
+                case Patch:
+                    #if sys
+
+                    http.customRequest(true, output, null, "PATCH");
+
+                    #else
+
+                    http.customRequest(true, "PATCH");
                     http.request(true);
 
                     #end
