@@ -16,6 +16,7 @@ class UrlObject {
     }
 
     private var _queryParams:Map<String, Any>;
+    private var _paramOrder:Array<String> = [];
     public var queryParams(get, set):Map<String, Any>;
     private function get_queryParams():Map<String, Any> {
         if (_queryParams == null) {
@@ -25,12 +26,18 @@ class UrlObject {
     }
     private function set_queryParams(value:Map<String, Any>):Map<String, Any> {
         _queryParams = value;
+        _paramOrder = [];
+        if (value != null) {
+            for (key in value.keys()) {
+                _paramOrder.push(key);
+            }
+        }
         return value;
     }
 
     public function build(includeParams:Bool = true):String {
         var sb = new StringBuf();
-        
+
         if (scheme != null) {
             sb.add(scheme);
         } else {
@@ -51,8 +58,10 @@ class UrlObject {
 
         if (includeParams && _queryParams != null) {
             var parts = [];
-            for (key in _queryParams.keys()) {
-                parts.push(key + "=" + _queryParams.get(key));
+            for (key in _paramOrder) {
+                if (_queryParams.exists(key)) {
+                    parts.push(key + "=" + _queryParams.get(key));
+                }
             }
 
             if (parts.length > 0) {
@@ -69,6 +78,7 @@ class UrlObject {
         domain = null;
         path = null;
         _queryParams = null;
+        _paramOrder = [];
 
         url = url.trim();
         var n1 = url.indexOf("://");
@@ -126,6 +136,7 @@ class UrlObject {
                 }
 
                 _queryParams.set(paramName, paramValue);
+                _paramOrder.push(paramName);
             }
             url = "";
         }

@@ -36,7 +36,11 @@ class DefaultHttpProvider implements IHttpProvider {
         #if http_threaded_use_completion_queue
 
         return new Promise((resolve, reject) -> {
+            #if haxe5
+            sys.thread.Thread.create(() -> {
+            #else
             sys.thread.Thread.createWithEventLoop(() -> {
+            #end
                 makeRequestCommon(request).then(response -> {
                     _completionQueue.push(Success(response, resolve));
                 }, error -> {
@@ -48,8 +52,19 @@ class DefaultHttpProvider implements IHttpProvider {
         #else
 
         return new Promise((resolve, reject) -> {
+            #if haxe5
+            var mainLoop = haxe.EventLoop.main;
+            mainLoop.promise();
+            sys.thread.Thread.create(() -> {
+                makeRequestCommon(request).then(response -> {
+                    mainLoop.run(() -> { resolve(response); mainLoop.deliver(); });
+                }, error -> {
+                    mainLoop.run(() -> { reject(error); mainLoop.deliver(); });
+                });
+            });
+            #else
             var mainThread = sys.thread.Thread.current();
-            mainThread.events.promise(); // keep main thread alive
+            mainThread.events.promise();
             sys.thread.Thread.createWithEventLoop(() -> {
                 makeRequestCommon(request).then(response -> {
                     mainThread.events.runPromised(() -> resolve(response));
@@ -57,6 +72,7 @@ class DefaultHttpProvider implements IHttpProvider {
                     mainThread.events.runPromised(() -> reject(error));
                 });
             });
+            #end
         });
 
         #end
@@ -110,23 +126,16 @@ class DefaultHttpProvider implements IHttpProvider {
 
     private function makeRequestCommon(request:HttpRequest):Promise<HttpResponse> {
         return new Promise((resolve, reject) -> {
-            var url = request.url.build(false);
+            var url = request.url.build(true);
             var http = new Http(url);
             var response = new HttpResponse();
             response.originalRequest = request;
 
-            // add any params from the url query
-            var allParameters:Map<String, Any> = [];
-            for (queryParamKey in request.url.queryParams.keys()) {
-                allParameters.set(queryParamKey, request.url.queryParams.get(queryParamKey));
-            }
-            // lets also add (and overwrite) any params that come from the actual request
+            // add any request-level params not already in the URL
             for (queryParamKey in request.queryParams.keys()) {
-                allParameters.set(queryParamKey, request.queryParams.get(queryParamKey));
-            }
-            // finally lets add them to the actual request
-            for (queryParamKey in allParameters.keys()) {
-                http.addParameter(queryParamKey, allParameters.get(queryParamKey));
+                if (!request.url.queryParams.exists(queryParamKey)) {
+                    http.addParameter(queryParamKey, request.queryParams.get(queryParamKey));
+                }
             }
 
             // add headers
@@ -141,7 +150,7 @@ class DefaultHttpProvider implements IHttpProvider {
                 var method:String = request.method;
                 log.debug('making "${method.toLowerCase()}" request to "${url}"');
                 log.debug('    headers:', request.headers);
-                log.debug('    query params:', allParameters);
+                log.debug('    query params:', request.url.queryParams);
                 if (request.body != null) {
                     log.debug('    body:', request.body);
                 }

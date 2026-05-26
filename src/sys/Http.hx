@@ -54,7 +54,7 @@ class Http extends haxe.http.HttpBase {
 		super(url);
 	}
 
-	public override function request(?post:Bool) {
+	public override function request(post:Bool = false) {
 		var output = new haxe.io.BytesOutput();
 		var old = onError;
 		var err = false;
